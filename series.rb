@@ -52,7 +52,7 @@ get '/search/*' do
 	if result == 'null'
 		@title = 'No Results'
 		@search = params[:splat].first
-		erb :no_result
+		erb :no_results
 	else
 		result = JSON.parse(result)
 		if result.key? 'shows'
@@ -68,7 +68,7 @@ get '/search/*' do
 end
 
 get '/show/:name' do
-	result = Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(params[:name].first)}"))
+	result = Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(params[:name])}"))
 	if result == 'null' 
 		redirect to("/search/#{URI.escape(params[:name].first)}")
 	else
@@ -109,45 +109,3 @@ end
 delete 'show/:name/:season/:episode?' do
 	# mark :season/:episode as unwatched
 end
-
-__END__
-
-@@ layout
-<!DOCTYPE html>
-<html>
-<head>
-	<title><%= @title %></title>
-</head>
-<body>
-	<form  method="get" action="/">Search: <input type="text" name="search" value="<%== @search %>"><input type="submit" value="Go"> ('%' is a wildcard)</form>
-	<%= yield %>
-</body>
-</html>
-
-@@ home 
-
-@@ no_result
-<h1>No results</h1>
-
-@@ multi_result
-<h1>Results for "<%== @search %>"</h1>
-<ul>
-<% @shows.each do |show| %>
-	<li><a href="/?search=<%= URI.escape(show['name']) %>"><%= show['name'] %></a> (<%= show['year'].to_s %>)</li>
-<% end %>
-</ul>
-
-@@ single_result
-<h1><%= @show_name %> <small>(<%= @year %>)</small></h1>
-<ol>
-<% @seasons.each_with_index do |season, i| %>
-	<li><input type="checkbox" id="s<%= i %>"> <label for="s<%= i %>">Season</label>
-		<ol>
-		<% season.each_with_index do |episode, j| %>
-			<li><input type="checkbox" id="<%= i %>_<%= j %>"> <label for="<%= i %>_<%= j %>"><%= episode %></label></li>
-		<% end %>
-		</ol>
-	</li>
-<% end %>
-</ol>
-

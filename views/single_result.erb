@@ -1,0 +1,12 @@
+<h1><%= @show_name %> <small>(<%= @year %>)</small></h1>
+<ol>
+<% @seasons.each_with_index do |season, i| %>
+	<li><input type="checkbox" id="s<%= i %>"> <label for="s<%= i %>">Season</label>
+		<ol>
+		<% season.each_with_index do |episode, j| %>
+			<li><input type="checkbox" id="<%= i %>_<%= j %>"> <label for="<%= i %>_<%= j %>"><%= episode %></label></li>
+		<% end %>
+		</ol>
+	</li>
+<% end %>
+</ol>

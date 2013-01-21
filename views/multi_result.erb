@@ -1,0 +1,6 @@
+<h1>Results for "<%== @search %>"</h1>
+<ul>
+<% @shows.each do |show| %>
+	<li><a href="/?search=<%= URI.escape(show['name']) %>"><%= show['name'] %></a> (<%= show['year'].to_s %>)</li>
+<% end %>
+</ul>

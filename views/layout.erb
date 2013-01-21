@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title><%= @title %></title>
+</head>
+<body>
+	<form  method="get" action="/">Search: <input type="text" name="search" value="<%== @search %>"><input type="submit" value="Go"> ('%' is a wildcard)</form>
+	<%= yield %>
+</body>
+</html>
