@@ -2,13 +2,26 @@ require 'sinatra'
 require 'net/http'
 require 'json'
 require 'erubis'
+require 'bcrypt'
+
+require 'data_mapper'
+DataMapper::Logger.new($stdout, :debug)
+require './models/data-set'
+require './models/user'
+DataMapper.setup(:default, "sqlite://#{Dir.pwd}/database.db")
+DataMapper.finalize.auto_upgrade!
+
+#set :session_secret, ''
+enable :sessions
+
+helpers do
+	def login?
+		!session[:username].nil?
+	end
+end
 
 get '/' do
-	# if session[logged_in]
-	#	overview over all series, logout button, delete account button
-	# else
-	#	show landing page
-	if params.has_key? 'search'
+	if params.has_key? 'search' # redo with before filter?
 		redirect to("/search/#{URI.escape(params['search'])}")
 	else
 		@title = 'title'
@@ -18,46 +31,77 @@ get '/' do
 end
 
 post '/login' do
-	# if !session[logged_in]
-	#	if pw_repeat.empty?
-	#		login
-	# 	else
-	#		register
-	# else
-	#	redirect /
+	unless login? or params[:username] or params[:password] or params[:passord_repeat].nil?
+		if params[:password_repeat].empty?
+			# login
+			db_user = User.first(:name => params[:username])
+			if !db_user.nil? and db_user.pw_hash == BCrypt::Engine.hash_secret(params[:password], db_user.pw_salt)
+	 			session[:username] = db_user.name
+				# flash success
+			else
+				# flash username/pw wrong
+			end
+		else
+			# register	
+			db_user= User.first(:name => params[:username])
+			
+			if params[:password] != params[:password_repeat]
+				# flash pw not matching
+			elsif not db_user.nil?
+				# flash username taken
+			else
+				pw_salt = BCrypt::Engine.generate_salt
+				pw_hash = BCrypt::Engine.hash_secret(params[:password], pw_salt)
+
+				new_user = User.new(
+					:name => params[:username],
+					:pw_salt => pw_salt,
+					:pw_hash => pw_hash, 
+				)
+
+				if new_user.save
+					session[:username] = params[:username]
+					# flash sucess
+				else
+					new_user.errors.each do |error|
+						puts error
+					end
+					# flash errors!
+				end
+			end
+
+		end
+	end
+	redirect '/'
 end
 
 get '/logout' do
-	# if session[logged_in]
-	#	logout
-	# else
-	#	redirect /
+	session[:username] = nil if login?
+	redirect '/'
 end
 
 post '/delete' do
-	# if session[logged_in]
-	#	if confirm_pw is correct
-	#		delete account
-	#		logout
-	#	else
-	#		redirect with alert
-	# else
-	#	redirect /
+	# if login? and confirm_pw is correct then delete account and logout
+	# session[:username] = nil
+	redirect '/'
 end
 
-get '/search/*' do
-	# search IMDb API for params[:splat]
-	# display results
-	result = Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(params[:splat].first)}"))
+post '/change-password' do
+	# if login? and old_pw is correct and new_pw == new_pw_repeat then change password
+	redirect '/'
+end
+
+get '/search/:query' do
+	result = Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(params[:query].first)}"))
 	if result == 'null'
 		@title = 'No Results'
-		@search = params[:splat].first
+		@search = params[:query].first
 		erb :no_results
 	else
 		result = JSON.parse(result)
 		if result.key? 'shows'
 			@shows = result['shows']
-			@search = params[:splat].first
+			@search = params[:query].first
 			@title = "Results for \"#{@search}\""
 			erb :multi_result
 		else
@@ -102,10 +146,11 @@ delete '/show/:name' do
 	# delete show from favorites
 end
 
-put '/show/:name/:season/:episode?' do
+put '/show/:name/:season/?:episode?' do
 	# mark :season/:episode as watched
 end
 
-delete 'show/:name/:season/:episode?' do
+delete 'show/:name/:season/?:episode?' do
 	# mark :season/:episode as unwatched
 end
+

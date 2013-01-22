@@ -1,0 +1,8 @@
+<% unless login? %>
+	<form method="post" action="/login">
+		<input type="text" placeholder="Username" name="username"><br>
+		<input type="password" name="password" placeholder="Password"><br>
+		<input type="password" name="password_repeat" placeholder=" Repeat Password"> to register<br>
+		<input type="submit" value="login/register!">
+	</form>
+<% end %>

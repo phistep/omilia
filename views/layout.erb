@@ -4,7 +4,15 @@
 	<title><%= @title %></title>
 </head>
 <body>
+	<ul>
+		<li><a href="/">home</a></li>
+	<% if login? %>
+		<li>Logged ins as: <%== session[:username] %></li>
+		<li><a href="/logout">logout</a></li>
+	<% end %>
+	</ul>
 	<form  method="get" action="/">Search: <input type="text" name="search" value="<%== @search %>"><input type="submit" value="Go"> ('%' is a wildcard)</form>
+	<br>
 	<%= yield %>
 </body>
 </html>
