@@ -2,6 +2,40 @@
 <html>
 <head>
 	<title><%= @title %></title>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+	<script type="text/javascript">   
+		$(document).ready(function(){
+
+			var showname = function(){ return location.pathname.split('/').pop() };
+	
+			$(".fav").on("click", function(event){
+				var tis = $(this);
+				$.ajax({
+					'url': '/show/' + showname(),
+					'dataType': 'text',
+					'async': false,
+					'success': function(response){
+						console.log('success! ' + response);
+						if (tis.hasClass('faved')){
+							tis.removeClass('faved');
+						} else {
+							tis.addClass('faved');
+						}
+					},
+					'error': function(response){
+						console.log('error! ' + response);
+						// display helpful tooltip
+					 },
+					'type': tis.hasClass('faved') ? 'DELETE' : 'PUT'
+				});
+			});
+
+			$("input[type=checkbox]").on("click", function(event){
+				alert($(this).attr('checked'));
+			});
+		});
+	</script>
+	<style> .faved{ background: green;} </style>
 </head>
 <body>
 	<ul>

@@ -1,4 +1,9 @@
 <% if login? %>
+	<ul>
+	<% User.first(:name => username).datasets.all(:order => [ :touch.desc ]).each do |show| %>
+		<li><a href="<%= to('/show/'+show.name) %>"><%== show.name %></a></li>
+	<% end %>
+	</ul>
 	Change Password:<br>
 	<form method="post" action="/change-password">
 		<input type="password" name="old_password" placeholder="Old Password"><br>

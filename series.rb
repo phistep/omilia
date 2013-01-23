@@ -192,10 +192,37 @@ end
 
 put '/show/:name' do
 	# save show as favorite
+	user = User.first(:name => username)
+	if user.datasets.all(:name => params[:name]).empty?
+		fav = user.datasets.new(
+			:name => params[:name],
+			:touch => Time.now,
+		)
+		if fav.save
+			status 201 # created
+		else
+			fav.errors.each do |error|
+				puts error
+			end
+			status 500 # internal server error
+		end
+	else
+		status 409 # conflict
+	end
 end
 
 delete '/show/:name' do
 	# delete show from favorites
+	user = User.first(:name => username)
+	if user.datasets.all(:name => params[:name]).empty?
+		status 409 # conflict
+	else
+		if user.datasets.all(:name => params[:name]).destroy
+			status 202 # accepted
+		else
+			status 500 # internal server error
+		end	
+	end
 end
 
 put '/show/:name/:season/?:episode?' do

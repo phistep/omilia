@@ -1,4 +1,10 @@
 <h1><%= @show_name %> <small>(<%= @year %>)</small></h1>
+<% if login? %>
+<% if User.first(:name => username).datasets.first(:name => @show_name) %>
+	<input type="button" class="fav faved" url="<%= URI.escape(@show_name) %>" value="Remove from Favorites">
+<% else %>
+	<input type="button" class="fav" url="<%= URI.escape(@show_name) %>" value="Add to Favorites">
+<% end end %>
 <ol>
 <% @seasons.each_with_index do |season, i| %>
 	<li><input type="checkbox" id="s<%= i %>"> <label for="s<%= i %>">Season</label>
