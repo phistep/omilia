@@ -23,6 +23,11 @@ helpers do
 		session[:username]
 	end
 
+	def password_correct? name, password, db_user=nil
+		db_user ||= User.first(:name => name)
+		db_user && db_user.pw_hash == BCrypt::Engine.hash_secret(password, db_user.pw_salt)			
+	end
+
 	def search_api query
 		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(query)}"))
 	end
@@ -44,9 +49,8 @@ post '/login' do
 	unless login? #or params[:username] or params[:password] or params[:password_repeat].nil?
 		if params[:password_repeat].empty?
 			# login
-			db_user = User.first(:name => params[:username])
-			if !db_user.nil? and db_user.pw_hash == BCrypt::Engine.hash_secret(params[:password], db_user.pw_salt)
-	 			session[:username] = db_user.name
+	 		if password_correct? params[:username], params[:password]
+				session[:username] = params[:username]
 				# flash success
 			else
 				# flash username/pw wrong
@@ -91,13 +95,12 @@ get '/logout' do
 end
 
 post '/change-password' do
-	# if login? and old_pw is correct and new_pw == new_pw_repeat then change password
 	if login? and params[:old_password] and params[:password] and params[:password_repeat]
 		db_user = User.first(:name => username)
 
 		if params[:password] != params[:password_repeat]
 			# flash password dont match
-		elsif db_user.pw_hash != BCrypt::Engine.hash_secret(params[:old_password], db_user.pw_salt)
+		elsif password_correct? username, params[:password], db_user 
 			# flash password wrong
 		else
 			# change password
@@ -124,6 +127,19 @@ end
 
 post '/delete' do
 	# if login? and confirm_pw is correct then delete account and logout
+	if login? and params[:password]
+		user = User.first(:name => username)
+		if password_correct? username, params[:password], user	
+			if user.datasets.all.destroy && user.destroy
+				# flash "sucess"
+				session[:username] = nil
+			else
+				# flash error
+			end 
+		else
+			# flash password wrong
+		end	
+end
 	redirect '/'
 end
 
