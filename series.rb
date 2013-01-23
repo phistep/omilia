@@ -19,6 +19,10 @@ helpers do
 		!session[:username].nil?
 	end
 
+	def username
+		session[:username]
+	end
+
 	def search_api query
 		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(query)}"))
 	end
@@ -86,14 +90,40 @@ get '/logout' do
 	redirect '/'
 end
 
-post '/delete' do
-	# if login? and confirm_pw is correct then delete account and logout
-	# session[:username] = nil
+post '/change-password' do
+	# if login? and old_pw is correct and new_pw == new_pw_repeat then change password
+	if login? and params[:old_password] and params[:password] and params[:password_repeat]
+		db_user = User.first(:name => username)
+
+		if params[:password] != params[:password_repeat]
+			# flash password dont match
+		elsif db_user.pw_hash != BCrypt::Engine.hash_secret(params[:old_password], db_user.pw_salt)
+			# flash password wrong
+		else
+			# change password
+			pw_salt = BCrypt::Engine.generate_salt
+			pw_hash = BCrypt::Engine.hash_secret(params[:password], pw_salt)
+
+			success = db_user.update(
+				:pw_salt => pw_salt,
+				:pw_hash => pw_hash 
+			)
+
+			unless success
+				new_user.errors.each do |error|
+					puts error
+				end
+				# flash errors!
+			else
+				# flash success
+			end
+		end
+	end
 	redirect '/'
 end
 
-post '/change-password' do
-	# if login? and old_pw is correct and new_pw == new_pw_repeat then change password
+post '/delete' do
+	# if login? and confirm_pw is correct then delete account and logout
 	redirect '/'
 end
 

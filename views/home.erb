@@ -1,4 +1,18 @@
-<% unless login? %>
+<% if login? %>
+	Change Password:<br>
+	<form method="post" action="/change-password">
+		<input type="password" name="old_password" placeholder="Old Password"><br>
+		<input type="password" name="password" placeholder="New Password"><br>
+		<input type="password" name="password_repeat" placeholder="Repeat New Password"><br>
+		<input type="submit" value="change password">
+	</form>
+	<br><br>
+	Delete Account:</br>
+	<form method="post" action "/delete">
+		<input type="password" name="password" placeholder="Confirm Password"><br>
+		<input type="submit" value="delete account"> Cannot be undone!
+	</form>
+<% else %>	
 	<form method="post" action="/login">
 		<input type="text" placeholder="Username" name="username"><br>
 		<input type="password" name="password" placeholder="Password"><br>
