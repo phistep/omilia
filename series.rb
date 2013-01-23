@@ -11,27 +11,33 @@ require './models/user'
 DataMapper.setup(:default, "sqlite://#{Dir.pwd}/database.db")
 DataMapper.finalize.auto_upgrade!
 
-#set :session_secret, ''
+set :session_secret, ''
 enable :sessions
 
 helpers do
 	def login?
 		!session[:username].nil?
 	end
-end
 
-get '/' do
-	if params.has_key? 'search' # redo with before filter?
-		redirect to("/search/#{URI.escape(params['search'])}")
-	else
-		@title = 'title'
-		@search = ''
-		erb :home
+	def search_api query
+		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(query)}"))
 	end
 end
 
+before do
+	if params.has_key? 'search'
+		redirect to("/search/#{URI.escape(params['search'])}")
+	end
+end
+
+get '/' do
+	@title = 'title'
+	@search = ''
+	erb :home
+end
+
 post '/login' do
-	unless login? or params[:username] or params[:password] or params[:passord_repeat].nil?
+	unless login? #or params[:username] or params[:password] or params[:password_repeat].nil?
 		if params[:password_repeat].empty?
 			# login
 			db_user = User.first(:name => params[:username])
@@ -92,16 +98,16 @@ post '/change-password' do
 end
 
 get '/search/:query' do
-	result = Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(params[:query].first)}"))
+	result = search_api params[:query]
 	if result == 'null'
 		@title = 'No Results'
-		@search = params[:query].first
+		@search = params[:query]
 		erb :no_results
 	else
 		result = JSON.parse(result)
 		if result.key? 'shows'
 			@shows = result['shows']
-			@search = params[:query].first
+			@search = params[:query]
 			@title = "Results for \"#{@search}\""
 			erb :multi_result
 		else
@@ -112,7 +118,7 @@ get '/search/:query' do
 end
 
 get '/show/:name' do
-	result = Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(params[:name])}"))
+	result = search_api params[:name]
 	if result == 'null' 
 		redirect to("/search/#{URI.escape(params[:name].first)}")
 	else
