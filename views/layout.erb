@@ -3,6 +3,7 @@
 <head>
 	<title><%= @title %></title>
 	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
+<% if login? %>
 	<script type="text/javascript">   
 		$(document).ready(function(){
 
@@ -13,7 +14,7 @@
 				$.ajax({
 					'url': '/show/' + showname(),
 					'dataType': 'text',
-					'async': false,
+					'async': true,
 					'success': function(response){
 						console.log('success! ' + response);
 						if (tis.hasClass('faved')){
@@ -30,12 +31,34 @@
 				});
 			});
 
-			$("input[type=checkbox]").on("click", function(event){
-				alert($(this).attr('checked'));
+			$("input[type=checkbox].episode").on("change", function(event){
+				var tis = $(this);
+				var season = $(this).attr('id').split('_')[0];
+				var episode = $(this).attr('id').split('_')[1];
+				$.ajax({
+					'url': '/show/' + showname() + '/' + season + '/' + episode,
+					'dataType': 'text',
+					'async': true,
+					'success': function(response){
+						console.log('success! ' + response);
+					},
+					'error': function(response){
+						console.log('error! ' + response);
+						// display helpful tooltip
+						if (tis.attr('checked') == 'checked'){
+							tis.removeAttr('checked');
+						} else {
+							tis.attr('checked', 'checked');
+						}
+					 },
+					'type': tis.attr('checked') == 'checked' ? 'PUT' : 'DELETE'
+				});
+
 			});
 		});
 	</script>
 	<style> .faved{ background: green;} </style>
+<% end %>
 </head>
 <body>
 	<ul>

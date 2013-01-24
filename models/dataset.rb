@@ -4,7 +4,7 @@ class Dataset
 	property :id,			Serial
 	property :name,			String,		:required => true
 	property :touch,		DateTime
-	property :data,			Text
+	property :episodes,		Text
 	property :collapsed, 	Text
 	
 	belongs_to :user

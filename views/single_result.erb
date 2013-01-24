@@ -1,16 +1,19 @@
 <h1><%= @show_name %> <small>(<%= @year %>)</small></h1>
-<% if login? %>
-<% if User.first(:name => username).datasets.first(:name => @show_name) %>
+<% if login?
+	if show = User.first(:name => username).datasets.first(:name => @show_name)
+		episodes = show.episodes || String.new
+%>
 	<input type="button" class="fav faved" url="<%= URI.escape(@show_name) %>" value="Remove from Favorites">
 <% else %>
 	<input type="button" class="fav" url="<%= URI.escape(@show_name) %>" value="Add to Favorites">
-<% end end %>
+<% end
+end %>
 <ol>
 <% @seasons.each_with_index do |season, i| %>
-	<li><input type="checkbox" id="s<%= i %>"> <label for="s<%= i %>">Season</label>
+	<li><input type="checkbox" class="season" id="s<%= i+1 %>"> <label for="s<%= i+1 %>">Season</label>
 		<ol>
 		<% season.each_with_index do |episode, j| %>
-			<li><input type="checkbox" id="<%= i %>_<%= j %>"> <label for="<%= i %>_<%= j %>"><%= episode %></label></li>
+			<li><input <%= if login? && episodes && episodes.include?("#{i+1}_#{j+1}") then 'checked="checked" ' end %>type="checkbox" class="episode" id="<%= i+1 %>_<%= j+1 %>"> <label for="<%= i+1 %>_<%= j+1 %>"><%= episode %></label></li>
 		<% end %>
 		</ol>
 	</li>

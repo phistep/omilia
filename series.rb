@@ -6,7 +6,7 @@ require 'bcrypt'
 
 require 'data_mapper'
 DataMapper::Logger.new($stdout, :debug)
-require './models/data-set'
+require './models/dataset'
 require './models/user'
 DataMapper.setup(:default, "sqlite://#{Dir.pwd}/database.db")
 DataMapper.finalize.auto_upgrade!
@@ -30,6 +30,26 @@ helpers do
 
 	def search_api query
 		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(query)}"))
+	end
+
+	def save_show name
+		user = User.first(:name => username)
+		if user.datasets.all(:name => name).empty?
+			fav = user.datasets.new(
+				:name => name,
+				:touch => Time.now,
+			)
+			if fav.save
+				return 201 # created
+			else
+				fav.errors.each do |error|
+					puts error
+				end
+				return 500 # internal server error
+			end
+		else
+			return 409 # conflict
+		end
 	end
 end
 
@@ -192,23 +212,7 @@ end
 
 put '/show/:name' do
 	# save show as favorite
-	user = User.first(:name => username)
-	if user.datasets.all(:name => params[:name]).empty?
-		fav = user.datasets.new(
-			:name => params[:name],
-			:touch => Time.now,
-		)
-		if fav.save
-			status 201 # created
-		else
-			fav.errors.each do |error|
-				puts error
-			end
-			status 500 # internal server error
-		end
-	else
-		status 409 # conflict
-	end
+	status save_show params[:name]
 end
 
 delete '/show/:name' do
@@ -225,11 +229,61 @@ delete '/show/:name' do
 	end
 end
 
-put '/show/:name/:season/?:episode?' do
+put '/show/:name/:season/:episode' do
 	# mark :season/:episode as watched
+	user = User.first(:name => username)
+	unless show = user.datasets.first(:name => params[:name])
+		if (status_code = save_show params[:name]) != 201
+			status = status_code
+			halt
+		end
+	end
+	show = user.datasets.first(:name => params[:name])
+	id = params[:season] + '_' + params[:episode]
+	episodes = show.episodes || String.new 
+	if episodes.include? id
+		status 409 # conflict
+	else
+		update = show.update(
+			:episodes => episodes + id + ';',
+			:touch => Time.now,
+		)
+		if update
+			status 201 # created
+		else
+			watch.errors.each do |error|
+				puts error
+			end
+			status 500 # internal server error
+		end
+	end
 end
 
-delete 'show/:name/:season/?:episode?' do
+delete '/show/:name/:season/:episode' do
 	# mark :season/:episode as unwatched
+	user = User.first(:name => username)
+	if show = user.datasets.first(:name => params[:name])
+		id = params[:season] + '_' + params[:episode] 
+		if show.episodes.include? id
+			new_episodes = show.episodes.sub(/#{id};/, '')
+			update = show.update(
+				:episodes => new_episodes, 
+				:touch => Time.now,
+			)
+			if update
+				status 202 # accepted 
+			else
+				watch.errors.each do |error|
+					puts error
+				end
+				status 500 # internal server error
+			end
+		else
+			status 409 # conflict
+		end
+	else
+		status 409 # conflict
+	end
+
 end
 
