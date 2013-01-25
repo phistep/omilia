@@ -57,8 +57,18 @@
 			});
 		});
 	</script>
-	<style> .faved{ background: green;} </style>
 <% end %>
+	<style>
+		 .faved{
+			background: green;
+		}
+		.error{
+			color: red;
+		}
+		.notice{
+			color: green;
+		}
+	</style>
 </head>
 <body>
 	<ul>
@@ -70,6 +80,15 @@
 	</ul>
 	<form  method="get" action="/">Search: <input type="text" name="search" value="<%== @search %>"><input type="submit" value="Go"> ('%' is a wildcard)</form>
 	<br>
+	<% if flash[:error] %>
+		<span class="error"> <%== flash[:error] %></span>
+		<br><br>
+	<% end
+	if flash[:notice] %>
+		<span class="notice"> <%== flash[:notice] %></span>
+		<br><br>
+	<% end %>
+
 	<%= yield %>
 </body>
 </html>

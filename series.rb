@@ -2,7 +2,8 @@ require 'sinatra'
 require 'net/http'
 require 'json'
 require 'erubis'
-require 'bcrypt'
+require 'bcrypt' # bcrypt-ruby
+require 'rack-flash' # rack-flash3
 
 require 'data_mapper'
 DataMapper::Logger.new($stdout, :debug)
@@ -13,6 +14,7 @@ DataMapper.finalize.auto_upgrade!
 
 set :session_secret, ''
 enable :sessions
+use Rack::Flash
 
 helpers do
 	def login?
@@ -25,7 +27,11 @@ helpers do
 
 	def password_correct? name, password, db_user=nil
 		db_user ||= User.first(:name => name)
-		db_user && db_user.pw_hash == BCrypt::Engine.hash_secret(password, db_user.pw_salt)			
+		if db_user 
+			return db_user.pw_hash == BCrypt::Engine.hash_secret(password, db_user.pw_salt)			
+		else
+			return false
+		end
 	end
 
 	def search_api query
@@ -71,18 +77,18 @@ post '/login' do
 			# login
 	 		if password_correct? params[:username], params[:password]
 				session[:username] = params[:username]
-				# flash success
+				flash[:notice] = "Welcome #{username}!"
 			else
-				# flash username/pw wrong
+				flash[:error] = "Username or password wrong!"
 			end
 		else
 			# register	
 			db_user= User.first(:name => params[:username])
 			
 			if params[:password] != params[:password_repeat]
-				# flash pw not matching
+				flash[:error] = "Passwords did not match, try again!"
 			elsif not db_user.nil?
-				# flash username taken
+				flash[:error] = "Unfortunately the username \"#{params[:username]}\" has been taken already. Please choose a different one."
 			else
 				pw_salt = BCrypt::Engine.generate_salt
 				pw_hash = BCrypt::Engine.hash_secret(params[:password], pw_salt)
@@ -95,12 +101,12 @@ post '/login' do
 
 				if new_user.save
 					session[:username] = params[:username]
-					# flash sucess
+					flash[:notice] = "Congratulations, #{params[:username]}, you have been registered sucessfully! Have a good time watchin'!"
 				else
 					new_user.errors.each do |error|
 						puts error
 					end
-					# flash errors!
+					flash[:error] = "An unkown error occured."
 				end
 			end
 
@@ -119,9 +125,9 @@ post '/change-password' do
 		db_user = User.first(:name => username)
 
 		if params[:password] != params[:password_repeat]
-			# flash password dont match
-		elsif password_correct? username, params[:password], db_user 
-			# flash password wrong
+			flash[:error] = "Passwords did not match, try again!"
+		elsif password_correct? username, params[:old_password], db_user 
+			flash[:error] = "The password was wrong, try again!"
 		else
 			# change password
 			pw_salt = BCrypt::Engine.generate_salt
@@ -136,9 +142,9 @@ post '/change-password' do
 				new_user.errors.each do |error|
 					puts error
 				end
-				# flash errors!
+				flash[:error] = "An unkown error occured."
 			else
-				# flash success
+				flash[:notice] = "Your password has been changed."
 			end
 		end
 	end
@@ -151,15 +157,15 @@ post '/delete' do
 		user = User.first(:name => username)
 		if password_correct? username, params[:password], user	
 			if user.datasets.all.destroy && user.destroy
-				# flash "sucess"
 				session[:username] = nil
+				flash[:notice] = "Your account has been deleted :( Good Bye!"
 			else
-				# flash error
+				flash[:error] = "An unkown error occured."
 			end 
 		else
-			# flash password wrong
+			flash[:error] = "The password was wrong, try again!"
 		end	
-end
+	end
 	redirect '/'
 end
 
