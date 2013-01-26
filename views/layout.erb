@@ -7,12 +7,10 @@
 	<script type="text/javascript">   
 		$(document).ready(function(){
 
-			var showname = function(){ return location.pathname.split('/').pop() };
-	
 			$(".fav").on("click", function(event){
 				var tis = $(this);
 				$.ajax({
-					'url': '/show/' + showname(),
+					'url': '/show/' + tis.attr('url'),
 					'dataType': 'text',
 					'async': true,
 					'success': function(response){
@@ -35,8 +33,9 @@
 				var tis = $(this);
 				var season = $(this).attr('id').split('_')[0];
 				var episode = $(this).attr('id').split('_')[1];
+				var show = location.pathname.split('/').pop();
 				$.ajax({
-					'url': '/show/' + showname() + '/' + season + '/' + episode,
+					'url': '/show/' + show + '/' + season + '/' + episode,
 					'dataType': 'text',
 					'async': true,
 					'success': function(response){
@@ -74,7 +73,7 @@
 	<ul>
 		<li><a href="/">home</a></li>
 	<% if login? %>
-		<li>Logged ins as: <%== session[:username] %></li>
+		<li>Logged in as: <%== session[:username] %></li>
 		<li><a href="/logout">logout</a></li>
 	<% end %>
 	</ul>

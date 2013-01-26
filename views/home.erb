@@ -1,7 +1,19 @@
 <% if login? %>
 	<ul>
-	<% User.first(:name => username).datasets.all(:order => [ :touch.desc ]).each do |show| %>
-		<li><a href="<%= to('/show/'+show.name) %>"><%== show.name %></a></li>
+	<% @favorites.each do |show| %>
+		<% 
+			result = JSON.parse(search_api(show.name))
+			total = result[result.keys.first]['episodes'].count
+			if show.episodes
+				watched = show.episodes.split(';').count
+			else
+				watched = 0
+			end
+		%>
+		<li>
+		<input type="button" class="fav faved" url="<%= URI.escape(show['name']) %>" value="Remove from Favorites">
+		<a href="<%= to('/show/'+show.name) %>"><%== show.name %></a> <span class="watched"><%= watched %></span>/<span class="total"><%= total %></span>
+		</li>
 	<% end %>
 	</ul>
 	Change Password:<br>
@@ -12,7 +24,7 @@
 		<input type="submit" value="change password">
 	</form>
 	<br><br>
-	Delete Account:</br>
+	Delete Account:<br>
 	<form method="post" action="/delete">
 		<input type="password" name="password" placeholder="Confirm Password"><br>
 		<input type="submit" value="delete account"> Cannot be undone!

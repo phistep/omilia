@@ -57,6 +57,26 @@ helpers do
 			return 409 # conflict
 		end
 	end
+
+	def is_favorite? show
+		if login?
+			User.first(:name => username).datasets.first(:name => show)
+		else
+			false
+		end
+	end
+
+	def is_watched? show, season, episode 
+		if show = is_favorite?(show)
+			if episodes = show.episodes
+				episodes.include? "#{season}_#{episode}"
+			else
+				false
+			end
+		else
+			false
+		end
+	end
 end
 
 before do
@@ -68,6 +88,7 @@ end
 get '/' do
 	@title = 'title'
 	@search = ''
+	@favorites = User.first(:name => username).datasets.all(:order => [ :touch.desc ])
 	erb :home
 end
 
@@ -184,7 +205,7 @@ get '/search/:query' do
 			erb :multi_result
 		else
 			@show_name = (result.keys).first
-			redirect to("/show/#{URI.escape(@show_name)}")
+			redirect to('/show/' + @show_name)
 		end
 	end
 end
@@ -192,11 +213,11 @@ end
 get '/show/:name' do
 	result = search_api params[:name]
 	if result == 'null' 
-		redirect to("/search/#{URI.escape(params[:name].first)}")
+		redirect to('/search/' + params[:name].first)
 	else
 		result = JSON.parse(result)
 		if result.key? 'shows'
-			redirect to("/search/#{URI.escape(params[:name].first)}")
+			redirect to('/search/' + params[:name].first)
 		else
 			@show_name = (result.keys).first
 			@year = result[@show_name]['year']
