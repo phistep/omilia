@@ -88,7 +88,9 @@ end
 get '/' do
 	@title = 'title'
 	@search = ''
-	@favorites = User.first(:name => username).datasets.all(:order => [ :touch.desc ])
+	if login?
+		@favorites = User.first(:name => username).datasets.all(:order => [ :touch.desc ])
+	end
 	erb :home
 end
 
