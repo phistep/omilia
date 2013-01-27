@@ -60,23 +60,13 @@ helpers do
 
 	def is_favorite? show
 		if login?
-			User.first(:name => username).datasets.first(:name => show)
+			#User.first(:name => username).datasets.first(:name => show)
+			@datasets.first(:name => show)
 		else
 			false
 		end
 	end
 
-	def is_watched? show, season, episode 
-		if show = is_favorite?(show)
-			if episodes = show.episodes
-				episodes.include? "#{season}_#{episode}"
-			else
-				false
-			end
-		else
-			false
-		end
-	end
 end
 
 before do
@@ -85,11 +75,17 @@ before do
 	end
 end
 
+before do
+	if login?
+		@datasets = User.first(:name => username).datasets
+	end
+end
+
 get '/' do
 	@title = 'title'
 	@search = ''
 	if login?
-		@favorites = User.first(:name => username).datasets.all(:order => [ :touch.desc ])
+		@favorites = @datasets.all(:order => [ :touch.desc ])
 	end
 	erb :home
 end
@@ -204,6 +200,10 @@ get '/search/:query' do
 			@shows = result['shows']
 			@search = params[:query]
 			@title = "Results for \"#{@search}\""
+			@favorites = Array.new
+			@datasets.all.each do |show|
+				@favorites.push show.name
+			end
 			erb :multi_result
 		else
 			@show_name = (result.keys).first
@@ -233,6 +233,11 @@ get '/show/:name' do
 			
 			@title = @show_name
 			@search = '' 
+			if login? && show = @datasets.first(:name => @show_name)
+				@watched_episodes = show.episodes 
+			else
+				@watched_episodes = ""
+			end
 			erb :single_result
 		end
 	end

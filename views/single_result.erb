@@ -1,6 +1,6 @@
 <h1><%= @show_name %> <small>(<%= @year %>)</small></h1>
 <% if login? %>
-	<% if is_favorite? @show_name %>
+	<% if @datasets.first(:name => @show_name) %>
 		<input type="button" class="fav faved" url="<%= URI.escape(@show_name) %>" value="Remove from Favorites">
 	<% else %>
 		<input type="button" class="fav" url="<%= URI.escape(@show_name) %>" value="Add to Favorites">
@@ -11,8 +11,10 @@
 	<li><input type="checkbox" class="season" id="s<%= i+1 %>"> <label for="s<%= i+1 %>">Season</label>
 		<ol>
 		<% season.each_with_index do |episode, j| %>
-			<% id = "#{i+1}_#{j+1}" %>
-			<li><input <%= if is_watched?(@show_name, i+1, j+1) then 'checked="checked" ' end %>type="checkbox" class="episode" id="<%= id %>"> <label for="<%= id %>"><%= episode %></label></li>
+			<%
+				id = "#{i+1}_#{j+1}"
+			%>
+			<li><input <%= if @watched_episodes.include?(id) then 'checked="checked" ' end %>type="checkbox" class="episode" id="<%= id %>"> <label for="<%= id %>"><%= episode %></label></li>
 		<% end %>
 		</ol>
 	</li>

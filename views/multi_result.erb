@@ -3,7 +3,7 @@
 <% @shows.each do |show| %>
 	<li>
 <% if login? %>
-	<% if is_favorite? show['name'] %>
+	<% if @favorites.include? show['name'] %>
 		<input type="button" class="fav faved" url="<%= URI.escape(show['name']) %>" value="Remove from Favorites">
 	<% else %>
 		<input type="button" class="fav" url="<%= URI.escape(show['name']) %>" value="Add to Favorites">
