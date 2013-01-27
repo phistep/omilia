@@ -20,6 +20,9 @@
 						} else {
 							tis.addClass('faved');
 						}
+						if(tis.parent().get(0).tagName == 'LI'){
+							tis.parent().fadeOut(500, function(){ tis.parent().remove() });
+						}
 					},
 					'error': function(response){
 						console.log('error! ' + response);
