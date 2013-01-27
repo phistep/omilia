@@ -57,16 +57,6 @@ helpers do
 			return 409 # conflict
 		end
 	end
-
-	def is_favorite? show
-		if login?
-			#User.first(:name => username).datasets.first(:name => show)
-			@datasets.first(:name => show)
-		else
-			false
-		end
-	end
-
 end
 
 before do
