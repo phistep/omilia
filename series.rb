@@ -227,8 +227,8 @@ get '/show/:name' do
 			@title = @show_name
 			@search = '' 
 			@watched_episodes = ''
-			if login? && episodes = @datasets.first(:name => @show_name).episodes
-				@watched_episodes = episodes 
+			if login? && show = @datasets.first(:name => @show_name) && show.episodes
+				@watched_episodes = show.episodes 
 			end
 			erb :single_result
 		end
