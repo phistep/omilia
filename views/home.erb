@@ -14,14 +14,9 @@
 		%>
 		<a href="<%= to('/show/'+show.name) %>">
 			<li class="show">
-
-<!--
-		<input type="button" class="fav faved" url="<%= URI.escape(show['name']) %>" value="Remove from Favorites">
-		<a href="<%= to('/show/'+show.name) %>"><%== show.name %></a> <span class="watched"><%= watched %></span>/<span class="total"><%= total %></span>
--->		
 				<i rel="tooltip" title="Delete from favorites" data-toggle="modal" href="#" class="fav icon-star"></i>
 				<strong><%== show.name %></strong>
-				<%#== result[result.keys.first]['year'] %>
+				(<%== result[result.keys.first]['year'] %>)
 				<% if unwatched == 0 %>
 				<span rel="tooltip" title="No unwatched episodes" class="badge pull-right"><i class="icon-ok icon-white"></i></span>
 				<% else %>
