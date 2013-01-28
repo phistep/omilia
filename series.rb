@@ -12,6 +12,7 @@ require './models/user'
 DataMapper.setup(:default, "sqlite://#{Dir.pwd}/database.db")
 DataMapper.finalize.auto_upgrade!
 
+set :public_folder, File.dirname(__FILE__) + '/static'
 set :session_secret, ''
 enable :sessions
 use Rack::Flash
@@ -191,8 +192,10 @@ get '/search/:query' do
 			@search = params[:query]
 			@title = "Results for \"#{@search}\""
 			@favorites = Array.new
-			@datasets.all.each do |show|
-				@favorites.push show.name
+			if @datasets
+				@datasets.all.each do |show|
+					@favorites.push show.name
+				end
 			end
 			erb :multi_result
 		else

@@ -1,96 +1,92 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><%= @title %></title>
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.0/jquery.min.js"></script>
-<% if login? %>
-	<script type="text/javascript">   
-		$(document).ready(function(){
+	<title><%== @title %> &middot; omilia</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
-			$(".fav").on("click", function(event){
-				var tis = $(this);
-				$.ajax({
-					'url': '/show/' + tis.attr('url'),
-					'dataType': 'text',
-					'async': true,
-					'success': function(response){
-						console.log('success! ' + response);
-						if (tis.hasClass('faved')){
-							tis.removeClass('faved');
-						} else {
-							tis.addClass('faved');
-						}
-						if(tis.parent().get(0).tagName == 'LI'){
-							tis.parent().fadeOut(500, function(){ tis.parent().remove() });
-						}
-					},
-					'error': function(response){
-						console.log('error! ' + response);
-						// display helpful tooltip
-					 },
-					'type': tis.hasClass('faved') ? 'DELETE' : 'PUT'
-				});
-			});
+	<link href="<%= to('/css/bootstrap.min.css') %>" rel="stylesheet">
+	<link href="<%= to('/css/style.css') %>" rel="stylesheet">
+	<link href="<%= to('/css/bootstrap-responsive.min.css') %>" rel="stylesheet">
 
-			$("input[type=checkbox].episode").on("change", function(event){
-				var tis = $(this);
-				var season = $(this).attr('id').split('_')[0];
-				var episode = $(this).attr('id').split('_')[1];
-				var show = location.pathname.split('/').pop();
-				$.ajax({
-					'url': '/show/' + show + '/' + season + '/' + episode,
-					'dataType': 'text',
-					'async': true,
-					'success': function(response){
-						console.log('success! ' + response);
-					},
-					'error': function(response){
-						console.log('error! ' + response);
-						// display helpful tooltip
-						if (tis.attr('checked') == 'checked'){
-							tis.removeAttr('checked');
-						} else {
-							tis.attr('checked', 'checked');
-						}
-					 },
-					'type': tis.attr('checked') == 'checked' ? 'PUT' : 'DELETE'
-				});
-
-			});
-		});
-	</script>
-<% end %>
-	<style>
-		 .faved{
-			background: green;
-		}
-		.error{
-			color: red;
-		}
-		.notice{
-			color: green;
-		}
-	</style>
+	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+	<!--[if lt IE 9]>
+	  <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
 </head>
 <body>
-	<ul>
-		<li><a href="/">home</a></li>
-	<% if login? %>
-		<li>Logged in as: <%== session[:username] %></li>
-		<li><a href="/logout">logout</a></li>
-	<% end %>
-	</ul>
-	<form  method="get" action="/">Search: <input type="text" name="search" value="<%== @search %>"><input type="submit" value="Go"> ('%' is a wildcard)</form>
-	<br>
-	<% if flash[:error] %>
-		<span class="error"> <%== flash[:error] %></span>
-		<br><br>
-	<% end
-	if flash[:notice] %>
-		<span class="notice"> <%== flash[:notice] %></span>
-		<br><br>
-	<% end %>
 
-	<%= yield %>
+	<div class="navbar navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container">
+			<a class="brand" href="/">omilia</a>
+			<% if login? %>
+				<ul class="pull-right nav">
+					<li class="dropdown">
+						<a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<i class="icon-user"></i>
+							<%== username %>
+							<b class="caret"></b>
+						</a>
+						<ul class="dropdown-menu">
+							<li><a href="#">Change Password</a></li>
+							<li><a href="#">Delete Account</a></li>
+							<li class="divider"></li>
+							<li><a href="/logout"><i class="icon-off"></i> Logout</a></li>
+						</ul>
+					</li>
+				</ul>
+			<% end %>
+			</div> <!-- .container -->
+		</div> <!-- .navbar-inner -->
+	</div> <!-- .navbar -->
+
+	<div class="container">
+
+		<!-- Search -->
+		<div class="row-fluid">
+			<form method="get" action="/">
+				<div class="input-append">
+					<input class="span6 offset3" name="search" value="<%== @search %>" type="text" placeholder="Let's watch something, yo.">
+					<button type="submit" class="btn" type="submit"><i class="icon-search"></i></button>
+				</div> 
+			</form>
+		</div>
+
+		<% if flash[:error] or flash[:notice] %>
+		<!-- Alerts -->
+		<div class="row-fluid">
+			<div class="span8 offset2">
+				<% if flash[:notice] %>
+				<div class="alert alert-info">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					<%== flash[:notice] %>
+				</div>
+				<% end %>
+				<% if flash[:error] %>
+				<div class="alert alert-error">
+					<button type="button" class="close" data-dismiss="alert">&times;</button>
+					<strong>Error!</strong> <%== flash[:error] %>
+				</div>
+				<% end %>
+			</div>
+		</div>
+		<% end %>
+
+		<%= yield %>
+
+		<hr>
+
+		<div class="footer">
+			<div class="container muted">
+				<small>&copy; Ps0ke 2013</small>
+			</div>
+		</div>
+
+	</div> <!-- /container -->
+
+	<script type="text/javascript" src="<%= to('/js/jquery.min.js') %>"></script>
+	<script type="text/javascript" src="<%= to('/js/bootstrap.min.js') %>"></script>
+	<script type="text/javascript" src="<%= to('/js/script.js') %>"></script>
 </body>
 </html>
