@@ -1,5 +1,6 @@
 <% if login? %>
-	<ul>
+<div class="row-fluid">
+	<ul class="span8 offset2">
 	<% @favorites.each do |show| %>
 		<% 
 			result = JSON.parse(search_api(show.name))
@@ -9,13 +10,29 @@
 			else
 				watched = 0
 			end
+			unwatched = total - watched
 		%>
-		<li>
+		<a href="<%= to('/show/'+show.name) %>">
+			<li class="show">
+
+<!--
 		<input type="button" class="fav faved" url="<%= URI.escape(show['name']) %>" value="Remove from Favorites">
 		<a href="<%= to('/show/'+show.name) %>"><%== show.name %></a> <span class="watched"><%= watched %></span>/<span class="total"><%= total %></span>
-		</li>
+-->		
+				<i rel="tooltip" title="Delete from favorites" data-toggle="modal" href="#" class="fav icon-star"></i>
+				<strong><%== show.name %></strong>
+				<%#== result[result.keys.first]['year'] %>
+				<% if unwatched == 0 %>
+				<span rel="tooltip" title="No unwatched episodes" class="badge pull-right"><i class="icon-ok icon-white"></i></span>
+				<% else %>
+				<span rel="tooltip" title="<%== unwatched %> unwatched episodes" class="badge pull-right"><%== unwatched %></span>
+				<% end %>
+			</li>
+		</a>
 	<% end %>
 	</ul>
+</div>
+
 	Change Password:<br>
 	<form method="post" action="/change-password">
 		<input type="password" name="old_password" placeholder="Old Password"><br>

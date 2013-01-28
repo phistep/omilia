@@ -1,4 +1,5 @@
 $(document).ready(function(){
+	$('[rel=tooltip]').tooltip();
 
 	$(".fav").on("click", function(event){
 		var tis = $(this);
