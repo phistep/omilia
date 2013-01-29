@@ -1,13 +1,33 @@
 $(document).ready(function(){
-
+	// scroll away or auto-focus search field
 	if(location.pathname.split('/')[1] == 'show'){
 		window.scroll(0,60);
 	} else {
 		$('#search').focus();
 	}
 
+	// activate tooltips
 	$('[rel=tooltip]').tooltip();
 
+
+	// search field suggestions
+	var suggestions = [];
+	$.ajax({
+		'url': '/suggest',
+		dataType: 'json',
+		'async': false,
+		'success': function(response){
+			suggestions = response;
+		},
+		'type': 'GET'
+	});
+
+	$('#search').typeahead({
+		'source': suggestions
+	});
+	
+
+	// .fav star icon toggle
 	$('.icon-star').mouseenter(function(){
 		$(this).removeClass('icon-star').addClass('icon-star-empty');
 	});
@@ -21,6 +41,8 @@ $(document).ready(function(){
 		$(this).addClass('icon-star').removeClass('icon-star-empty');
 	});
 
+
+	// .fav ajax
 	$(".fav").on("click", function(event){
 		var tis = $(this);
 		$.ajax({
@@ -56,6 +78,8 @@ $(document).ready(function(){
 		return false;
 	});
 
+
+	// watch ajax
 	$("input[type=checkbox].episode").on("change", function(event){
 		var tis = $(this);
 		var season = $(this).attr('id').split('_')[0];

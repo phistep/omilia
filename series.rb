@@ -313,3 +313,13 @@ delete '/show/:name/:season/:episode' do
 
 end
 
+get '/suggest' do
+	results = Dataset.all(:fields => [:name], :unique => true)
+	shows = Array.new
+	results.each do |res|
+		shows.push res.name
+	end
+	content_type :json
+	JSON.generate(shows)
+end
+
