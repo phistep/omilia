@@ -12,7 +12,7 @@
 			end
 			unwatched = total - watched
 		%>
-		<a href="<%= to('/show/'+show.name) %>">
+		<a href="<%= to('/show/'+show.name) %>" class="show">
 			<li class="show">
 				<i rel="tooltip" title="Delete from favorites" data-toggle="modal" href="#" class="fav icon-star"></i>
 				<strong><%== show.name %></strong>
