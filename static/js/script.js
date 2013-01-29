@@ -8,6 +8,19 @@ $(document).ready(function(){
 
 	$('[rel=tooltip]').tooltip();
 
+	$('.icon-star').mouseenter(function(){
+		$(this).removeClass('icon-star').addClass('icon-star-empty');
+	});
+	$('.icon-star').mouseleave(function(){
+		$(this).addClass('icon-star').removeClass('icon-star-empty');
+	});
+	$('.icon-star-empty').mouseleave(function(){
+		$(this).removeClass('icon-star').addClass('icon-star-empty');
+	});
+	$('.icon-star-empty').mouseenter(function(){
+		$(this).addClass('icon-star').removeClass('icon-star-empty');
+	});
+
 	$(".fav").on("click", function(event){
 		var tis = $(this);
 		$.ajax({
