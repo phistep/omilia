@@ -25,6 +25,16 @@ a.show:hover{
 	text-decoration: none;
 }
 
+ul.seasons, li.season{
+	list-style: none;
+	margin-top: 30px;
+	margin-left: 0px;
+}
+
+ol.episodes{
+	padding-left: 20px;
+}
+
 .footer{
 	text-align: center;
 }
