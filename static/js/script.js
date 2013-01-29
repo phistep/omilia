@@ -24,7 +24,13 @@ $(document).ready(function(){
 					tis.removeClass('icon-star-empty');
 				}
 				if(tis.parent().get(0).tagName == 'LI'){
-					tis.parent().fadeOut(500, function(){ tis.parent().remove() });
+				//	tis.parent().fadeOut(500, function(){ tis.parent().remove() });
+				tis.parent().animate(
+					{ opacity:0, height:0 },
+					500,
+					function(){
+						tis.parent().remove();
+					});
 				}
 			},
 			'error': function(response){
@@ -33,6 +39,7 @@ $(document).ready(function(){
 			 },
 			'type': tis.hasClass('icon-star') ? 'DELETE' : 'PUT'
 		});
+		return false;
 	});
 
 	$("input[type=checkbox].episode").on("change", function(event){
