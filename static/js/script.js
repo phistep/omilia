@@ -1,4 +1,11 @@
 $(document).ready(function(){
+
+	if(location.pathname.split('/')[1] == 'show'){
+		window.scroll(0,60);
+	} else {
+		$('#search').focus();
+	}
+
 	$('[rel=tooltip]').tooltip();
 
 	$(".fav").on("click", function(event){
