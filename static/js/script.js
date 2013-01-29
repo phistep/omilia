@@ -4,15 +4,17 @@ $(document).ready(function(){
 	$(".fav").on("click", function(event){
 		var tis = $(this);
 		$.ajax({
-			'url': '/show/' + tis.attr('url'),
+			'url': '/show/' + tis.attr('show'),
 			'dataType': 'text',
 			'async': true,
 			'success': function(response){
 				console.log('success! ' + response);
-				if (tis.hasClass('faved')){
-					tis.removeClass('faved');
+				if (tis.hasClass('icon-star')){
+					tis.removeClass('icon-star');
+					tis.addClass('icon-star-empty');
 				} else {
-					tis.addClass('faved');
+					tis.addClass('icon-star');
+					tis.removeClass('icon-star-empty');
 				}
 				if(tis.parent().get(0).tagName == 'LI'){
 					tis.parent().fadeOut(500, function(){ tis.parent().remove() });
@@ -22,7 +24,7 @@ $(document).ready(function(){
 				console.log('error! ' + response);
 				// display helpful tooltip
 			 },
-			'type': tis.hasClass('faved') ? 'DELETE' : 'PUT'
+			'type': tis.hasClass('icon-star') ? 'DELETE' : 'PUT'
 		});
 	});
 

@@ -1,14 +1,18 @@
-<h1>Results for "<%== @search %>"</h1>
-<ul>
-<% @shows.each do |show| %>
-	<li>
-<% if login? %>
-	<% if @favorites.include? show['name'] %>
-		<input type="button" class="fav faved" url="<%= URI.escape(show['name']) %>" value="Remove from Favorites">
-	<% else %>
-		<input type="button" class="fav" url="<%= URI.escape(show['name']) %>" value="Add to Favorites">
+<div class="row-fluid">
+	<h3 class="offset2">Results for &ldquo;<%== @search %>&rdquo;:</h3>
+	<ul class="span8 offset2">
+	<% @shows.each do |show| %>
+		<a href="<%= to('/show/'+show['name']) %>" class="show">
+			<li class="show">
+			<% if login? && @favorites.include?(show['name']) %>
+					<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
+			<% else %>
+				<i rel="tooltip" title="Add to favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star-empty"></i>
+			<% end %>
+				<strong><%== show['name'] %></strong>
+				(<%== show['year'].to_s %>)
+			</li>
+		</a>
 	<% end %>
-<% end %>
-	<a href="<%= to('/show/'+show['name']) %>"><%== show['name'] %></a> (<%== show['year'].to_s %>)</li>
-<% end %>
-</ul>
+	</ul>
+</div>
