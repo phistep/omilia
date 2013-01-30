@@ -45,12 +45,14 @@
 
 		<!-- Search -->
 		<div class="row-fluid">
-			<form method="get" action="/">
-				<div class="input-append">
-					<input class="span6 offset3" name="search" id="search" value="<%== @search %>" type="text" placeholder="Let's watch something, yo." autocomplete="off">
-					<button class="btn" type="submit"><i class="icon-search"></i></button>
-				</div> 
-			</form>
+			<div class="span6 offset3">
+				<form method="get" action="/">
+					<div class="input-append">
+						<input name="search" class="span11" id="search" value="<%== @search %>" type="text" placeholder="Let's watch something, yo." autocomplete="off">
+						<button class="btn" type="submit"><i class="icon-search"></i></button>
+					</div> 
+				</form>
+			</div>
 		</div>
 
 		<% if flash[:error] or flash[:notice] %>
