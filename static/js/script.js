@@ -169,7 +169,7 @@ $(document).ready(function(){
 					tis.addClass('add');
 					tis.removeClass('remove');
 					tis.text('Add to favorites');
-					$('input[type=checkbox]').removeAttr('checked');
+					$('input[type=checkbox]').prop('checked', false);
 				},
 				function(resonse){
 					console.log('error remooooooovee');
@@ -206,16 +206,16 @@ $(document).ready(function(){
 						btn.text('Remove from favorites');
 					},
 					function(res){
-						if (tis.attr('checked') == 'checked'){
-							tis.removeAttr('checked');
+						if (tis.prop('checked')){
+							tis.prop('checked', false);
 						} else {
-							tis.attr('checked', 'checked');
+							tis.prop('checked', true);
 						}
 					}
 				);
 				*/
 			 },
-			'type': tis.attr('checked') == 'checked' ? 'PUT' : 'DELETE'
+			'type': tis.prop('checked') ? 'PUT' : 'DELETE'
 		});
 
 	});

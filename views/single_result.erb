@@ -16,7 +16,7 @@
 					<% id = "#{i+1}_#{j+1}"%>
 					<li>
 						<label class="checkbox inline" for="<%= id %>">
-							<input <%= if @watched_episodes.include?(id) then 'checked="checked" ' end %>type="checkbox" class="episode" id="<%= id %>"> <%== episode %>
+							<input <%= if @watched_episodes.include?(id) then 'checked ' end %>type="checkbox" class="episode" id="<%= id %>"> <%== episode %>
 						</label>
 					</li>
 				<% end %>
