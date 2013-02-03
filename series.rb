@@ -36,7 +36,8 @@ helpers do
 	end
 
 	def search_api query
-		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(query)}"))
+		cleaned_query = '%' + query.strip!.gsub(/\s+/, '%') + '%'
+		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(cleaned_query)}"))
 	end
 
 	def save_show name
