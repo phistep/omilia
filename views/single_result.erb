@@ -3,9 +3,9 @@
 		<h3><%= @show_name %> <small>(<%= @year %>)</small></h3>
 <% if login? %>
 	<% if @datasets.first(:name => @show_name) %>
-		<button class="btn fav" show="<%= URI.escape(@show_name) %>"><i class="icon-star"></i> Remove from Favorites</button>
+		<button id="favbtn" class="btn fav remove" show="<%= URI.escape(@show_name) %>">Remove from favorites</button>
 	<% else %>
-		<button class="btn fav" show="<%= URI.escape(@show_name) %>"><i class="icon-star-empty"></i> Add to favorites</button>
+		<button id="favbtn" class="btn fav add" show="<%= URI.escape(@show_name) %>">Add to favorites</button>
 	<% end %>
 <% end %>
 		<ul class="seasons">
@@ -23,6 +23,6 @@
 				</ol>
 			</li>
 		<% end %>
-		</ou>
+		</ol>
 	</div>
 </div>

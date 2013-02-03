@@ -3,9 +3,9 @@
 	<ul class="span8 offset2">
 	<% @shows.each do |show| %>
 		<a href="<%= to('/show/'+show['name']) %>" class="show">
-			<li class="show">
+			<li class="show search">
 			<% if login? && @favorites.include?(show['name']) %>
-					<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
+				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
 			<% else %>
 				<i rel="tooltip" title="Add to favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star-empty"></i>
 			<% end %>
