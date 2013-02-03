@@ -19,6 +19,16 @@ $(document).ready(function(){
 		$('#change-password').modal();
 	}
 
+	
+	// Change button label for login-register-button
+	$('#login-form #password_repeat').keyup(function(){
+		if($(this).val() == ''){
+			$('#login-register-button').text('Login');
+		} else {
+			$('#login-register-button').text('Register');
+		}
+	});
+
 
 	// search field suggestions
 	var suggestions = [];

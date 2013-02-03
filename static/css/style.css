@@ -6,6 +6,15 @@ div.tooltip-inner{
 	text-shadow: none;
 }
 
+#login-form{
+	margin: 0 auto;
+	margin-top: 25px;
+	float: none;
+}
+#login-form .control-group{
+	margin-bottom: 0px;
+}
+
 li.show {
 	padding: 8px 14px 8px 10px;
 	margin-bottom: 10px;

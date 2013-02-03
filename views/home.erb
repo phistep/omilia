@@ -29,10 +29,31 @@
 	</ul>
 </div>
 <% else %>	
-	<form method="post" action="/login">
-		<input type="text" placeholder="Username" name="username"><br>
-		<input type="password" name="password" placeholder="Password"><br>
-		<input type="password" name="password_repeat" placeholder=" Repeat Password"> to register<br>
-		<input type="submit" value="login/register!">
+<div class="row-fluid">
+	<form method="post" action="/login" id="login-form" class="span3">
+		<div class="control-group">
+			<label class="control-label" for="username">Username</label>
+			<div class="controls">
+				<input type="text" class="input-block-level" name="username" id="username" placeholder="Username">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="password">Password</label>
+			<div class="controls">
+				<input type="password" class="input-block-level" name="password" id="password" placeholder="Password">
+			</div>
+		</div>
+		<div class="control-group">
+			<label class="control-label" for="password_repeat">Repeat Password to Register</label>
+			<div class="controls">
+				<input type="password" class="input-block-level" name="password_repeat" id="password_repeat" placeholder="Repeat Password">
+			</div>
+		</div>
+		<div class="control-group">
+			<div class="controls pull-right">
+				<button id="login-register-button" type="submit" class="btn">Login</button>
+			</div>
+		</div>
 	</form>
+</div>
 <% end %>
