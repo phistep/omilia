@@ -14,7 +14,14 @@
 			progress = (watched.to_f/total.to_f*100).round
 		%>
 		<a href="<%= to('/show/'+show.name) %>" class="show">
-			<li class="show home" style="background: linear-gradient(to right, rgba(0, 0, 0, .05) <%== progress %>%, rgba(0, 0, 0, 0) <%== progress %>%, rgba(0, 0, 0, 0)), linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));">
+			<li class="show home" style="
+					background: -webkit-gradient(linear, left top, right top, color-stop(<%== progress %>% ,rgba(0, 0, 0, .05)), color-stop(<%== progress %>%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),
+					            -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(255, 255, 255)), color-stop(100%, rgb(242, 242, 242)));
+					background: -webkit-linear-gradient(left,      rgba(0, 0, 0, .05) <%== progress %>%, rgba(0, 0, 0, 0) <%== progress %>%, rgba(0, 0, 0, 0)),
+					            -webkit-linear-gradient(top,       rgb(255, 255, 255), rgb(242, 242, 242));
+					background:         linear-gradient(to right,  rgba(0, 0, 0, .05) <%== progress %>%, rgba(0, 0, 0, 0) <%== progress %>%, rgba(0, 0, 0, 0)),
+					                    linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));
+			">
 				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
 				<strong><%== show.name %></strong>
 				(<%== result[result.keys.first]['year'] %>)

@@ -183,7 +183,11 @@ $(document).ready(function(){
 	// watch ajax
 	$("input[type=checkbox].episode").on("change", function(event){
 		var tis = $(this);
-		var [season, episode] = tis.attr('id').split('_');
+		// js 1.7, does not work in Chrome
+		// https://developer.mozilla.org/en-US/docs/JavaScript/New_in_JavaScript/1.7#Destructuring_assignment_%28Merge_into_own_page.2Fsection%29
+		// var [season, episode] = tis.attr('id').split('_');
+		var season = tis.attr('id').split('_')[0];
+		var episode = tis.attr('id').split('_')[1];
 		var show = location.pathname.split('/').pop();
 		$.ajax({
 			'url': '/show/' + show + '/' + season + '/' + episode,
@@ -217,7 +221,6 @@ $(document).ready(function(){
 			 },
 			'type': tis.prop('checked') ? 'PUT' : 'DELETE'
 		});
-
 	});
 });
 
