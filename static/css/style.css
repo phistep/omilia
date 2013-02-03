@@ -38,14 +38,21 @@ li.show:hover{
 	   -moz-box-shadow: 0px 0px 5px 0px #ccc;
             box-shadow: 0px 0px 5px 0px #ccc;
 }
-a li.show, a.dropdown-toggle h4{
+a li.show{
 	color: rgb(51, 51, 51);
 }
-a.show:hover, a.dropdown-toggle:hover{
+a.show:hover{
 	text-decoration: none;
 }
 a.show:focus{
 	outline: none;
+}
+
+div.dropdown h4{
+	display: inline;
+}
+i[class*=icon-chevron]{
+	cursor: pointer;
 }
 
 ul.seasons, li.season{

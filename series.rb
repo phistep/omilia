@@ -238,6 +238,10 @@ get '/show/:name' do
 			if login? && @datasets.first(:name => @show_name) && episodes = @datasets.first(:name => @show_name).episodes
 				@watched_episodes = episodes 
 			end
+			@collapsed = ''
+			if login? && @datasets.first(:name => @show_name) && collapsed = @datasets.first(:name => @show_name).collapsed
+				@collapsed = collapsed
+			end
 			erb :single_result
 		end
 	end
@@ -265,6 +269,10 @@ end
 
 put '/show/:name/:season/:episode' do
 	# mark :season/:episode as watched
+	unless login?
+		status 403 # forbidden
+		halt
+	end
 	user = User.first(:name => username)
 	unless show = user.datasets.first(:name => params[:name])
 		if (status_code = save_show params[:name]) != 201
@@ -295,6 +303,10 @@ end
 
 delete '/show/:name/:season/:episode' do
 	# mark :season/:episode as unwatched
+	unless login?
+		status 403 # forbidden
+		halt
+	end
 	user = User.first(:name => username)
 	if show = user.datasets.first(:name => params[:name])
 		id = params[:season] + '_' + params[:episode] 
@@ -333,5 +345,62 @@ get '/suggest' do
 	end
 	content_type :json
 	JSON.generate(shows)
+end
+
+put '/collapse/:name/:season' do
+	unless login?
+		status 403 # forbidden
+		halt
+	end
+	user = User.first(:name => username)
+	if show = user.datasets.first(:name => params[:name])
+		show = user.datasets.first(:name => params[:name])
+		collapsed = show.collapsed || String.new 
+		if collapsed.include? params[:season]
+			status 409 # conflict
+		else
+			update = show.update(
+				:collapsed => collapsed + params[:season] + ';',
+			)
+			if update
+				status 201 # created
+			else
+				watch.errors.each do |error|
+						puts error
+				end
+			status 500 # internal server error
+			end
+		end
+	else
+		status 409 # conflict
+	end
+end
+
+delete '/collapse/:name/:season' do
+	unless login?
+		status 403 # forbidden
+		halt
+	end
+	user = User.first(:name => username)
+	if show = user.datasets.first(:name => params[:name])
+		if show.collapsed.include? params[:season]
+			new_collapsed = show.collapsed.sub(/#{params[:season]};/, '')
+			update = show.update(
+				:collapsed => new_collapsed, 
+			)
+			if update
+				status 202 # accepted 
+			else
+				watch.errors.each do |error|
+					puts error
+				end
+				status 500 # internal server error
+			end
+		else
+			status 409 # conflict
+		end
+	else
+		status 409 # conflict
+	end
 end
 

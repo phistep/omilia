@@ -228,5 +228,33 @@ $(document).ready(function(){
 	$('a[watch-season]').on('click', function(){
 		$('input[type=checkbox].episode[id^=' +$(this).attr('watch-season') + '_]:not(:checked)').trigger('click');
 	});
+
+
+	// collapsing
+	$('.season.collapsed ol').hide();
+
+	$('i[class*=icon-chevron]').on('click', function(){
+		tis = $(this);
+		var show = location.pathname.split('/').pop();
+		$.ajax({
+			'url': '/collapse/' + show + '/' + tis.attr('collapse-season'),
+			'dataType': 'text',
+			'async': true,
+			'success': function(response){
+				console.log('success! ' + response);
+			},
+			'type': tis.hasClass('icon-chevron-down') ? 'PUT' : 'DELETE'
+		});
+
+		if(tis.hasClass('icon-chevron-right')){
+			tis.addClass('icon-chevron-down');
+			tis.removeClass('icon-chevron-right')
+		}
+		else if(tis.hasClass('icon-chevron-down')){
+			tis.removeClass('icon-chevron-down');
+			tis.addClass('icon-chevron-right')
+		}
+		tis.parent().siblings('ol').slideToggle();
+	});
 });
 

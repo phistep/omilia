@@ -10,11 +10,12 @@
 <% end %>
 		<ul class="seasons unstyled">
 		<% @seasons.each_with_index do |season, i| %>
-			<li class="season">
-
+			<li class="season<%== if @collapsed.include?((i+1).to_s) then ' collapsed' end %>">
 				<div class="dropdown">
+					<i collapse-season="<%== i+1 %>" class="icon-chevron-<%== if @collapsed.include?((i+1).to_s) then 'right' else 'down' end %>"></i>
+					<h4>Season <%== i+1 %></h4>
 					<a href="#" class="dropdown-toggle" data-toggle="dropdown">
-						<h4>Season <%== i+1 %> <b class="caret"></b></h4>
+						 <b class="caret"></b>
 					</a>
 					<ul class="dropdown-menu">
 						<li><a watch-season="<%== i+1 %>"><i class="icon-ok-sign"></i> Mark all episodes as watched</a></li>
@@ -26,7 +27,7 @@
 					<% id = "#{i+1}_#{j+1}"%>
 					<li>
 						<label class="checkbox inline" for="<%= id %>">
-							<input <%= if @watched_episodes.include?(id) then 'checked ' end %>type="checkbox" class="episode" id="<%= id %>"> <%== episode %>
+							<input <%== if @watched_episodes.include?(id) then 'checked ' end %>type="checkbox" class="episode" id="<%= id %>"> <%== episode %>
 						</label>
 					</li>
 				<% end %>
