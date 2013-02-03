@@ -222,5 +222,11 @@ $(document).ready(function(){
 			'type': tis.prop('checked') ? 'PUT' : 'DELETE'
 		});
 	});
+
+
+	// mark all in season as watched
+	$('a[watch-season]').on('click', function(){
+		$('input[type=checkbox].episode[id^=' +$(this).attr('watch-season') + '_]:not(:checked)').trigger('click');
+	});
 });
 
