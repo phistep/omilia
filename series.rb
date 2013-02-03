@@ -45,6 +45,10 @@ helpers do
 	end
 
 	def save_show name
+		unless login?
+			status 403 # forbidden
+			halt
+		end
 		user = User.first(:name => username)
 		if user.datasets.all(:name => name).empty?
 			fav = user.datasets.new(
@@ -275,10 +279,7 @@ put '/show/:name/:season/:episode' do
 	end
 	user = User.first(:name => username)
 	unless show = user.datasets.first(:name => params[:name])
-		if (status_code = save_show params[:name]) != 201
-			status = status_code
-			halt
-		end
+		status 409 # conflict
 	end
 	show = user.datasets.first(:name => params[:name])
 	id = params[:season] + '_' + params[:episode]

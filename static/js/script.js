@@ -198,7 +198,6 @@ $(document).ready(function(){
 			},
 			'error': function(response){
 				console.log('error! ' + response);
-				/* Only reasonable if auto-adding will be removed from server.
 				faving(
 					'PUT',
 					show,
@@ -217,7 +216,6 @@ $(document).ready(function(){
 						}
 					}
 				);
-				*/
 			 },
 			'type': tis.prop('checked') ? 'PUT' : 'DELETE'
 		});
