@@ -323,6 +323,10 @@ end
 
 get '/suggest' do
 	results = Dataset.all(:fields => [:name], :unique => true)
+
+	# enable HTTP caching
+	last_modified results.max(:touch)
+
 	shows = Array.new
 	results.each do |res|
 		shows.push res.name
