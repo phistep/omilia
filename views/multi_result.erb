@@ -6,7 +6,7 @@
 			<li class="show search">
 			<% if login? && @favorites.include?(show['name']) %>
 				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
-			<% else %>
+			<% elsif login? %>
 				<i rel="tooltip" title="Add to favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star-empty"></i>
 			<% end %>
 				<strong><%== show['name'] %></strong>
