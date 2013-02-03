@@ -15,6 +15,11 @@ div.tooltip-inner{
 	margin-bottom: 0px;
 }
 
+#search-form{
+	margin: 0 auto;
+	float: none;
+}
+
 li.show {
 	padding: 8px 14px 8px 10px;
 	margin-bottom: 10px;
@@ -42,9 +47,7 @@ a.show:focus{
 }
 
 ul.seasons, li.season{
-	list-style: none;
 	margin-top: 30px;
-	margin-left: 0px;
 }
 
 ol.episodes{

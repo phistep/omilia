@@ -8,7 +8,7 @@
 		<button id="favbtn" class="btn fav add" show="<%= URI.escape(@show_name) %>">Add to favorites</button>
 	<% end %>
 <% end %>
-		<ul class="seasons">
+		<ul class="seasons unstyled">
 		<% @seasons.each_with_index do |season, i| %>
 			<li class="season"><h4>Season <%== i+1 %></h4>
 				<ol class="episodes">
