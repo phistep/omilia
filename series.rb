@@ -35,9 +35,13 @@ helpers do
 		end
 	end
 
-	def search_api query
-		cleaned_query = '%' + query.gsub(/\s+/, '%') + '%'
-		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(cleaned_query)}"))
+	def search_api query, clean=true
+		if clean
+			search_query = '%' + query.gsub(/\s+/, '%') + '%'
+		else
+			search_query = query
+		end
+		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(search_query)}"))
 	end
 
 	def save_show name

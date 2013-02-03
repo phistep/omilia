@@ -3,7 +3,7 @@
 	<ul class="span8 offset2">
 	<% @favorites.each do |show| %>
 		<% 
-			result = JSON.parse(search_api(show.name))
+			result = JSON.parse(search_api(show.name, false))
 			total = result[result.keys.first]['episodes'].count
 			if show.episodes
 				watched = show.episodes.split(';').count
