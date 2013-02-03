@@ -199,8 +199,7 @@ get '/search/:query' do
 			end
 			erb :multi_result
 		else
-			@show_name = (result.keys).first
-			redirect to('/show/' + @show_name)
+			redirect to("/show/#{URI.escape((result.keys).first)}")
 		end
 	end
 end
