@@ -36,7 +36,7 @@ helpers do
 	end
 
 	def search_api query
-		cleaned_query = '%' + query.strip!.gsub(/\s+/, '%') + '%'
+		cleaned_query = '%' + query.gsub(/\s+/, '%') + '%'
 		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(cleaned_query)}"))
 	end
 
@@ -181,6 +181,7 @@ post '/delete' do
 end
 
 get '/search/:query' do
+	params[:query].strip!
 	result = search_api params[:query]
 	if result == 'null'
 		@title = 'No Results'
