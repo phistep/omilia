@@ -11,6 +11,15 @@ $(document).ready(function(){
 	$('[rel=tooltip]').tooltip();
 
 
+	// show modals
+	if(window.location.hash == '#delete-account'){
+		$('#delete-account').modal();
+	}
+	if(window.location.hash == '#change-password'){
+		$('#change-password').modal();
+	}
+
+
 	// search field suggestions
 	var suggestions = [];
 	$.ajax({

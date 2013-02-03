@@ -28,64 +28,6 @@
 	<% end %>
 	</ul>
 </div>
-
-<!-- Change Password Modal -->
-<div id="change-password" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="change-password-label" aria-hidden="true">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3 id="myModalLabel">Change Password</h3>
-	</div>
-	<div class="modal-body">
-		<form id="change-password-form" class="form-horizontal" method="post" action="/change-password">
-			<div class="control-group">
-				<label class="control-label" for="old_password">Confirm Old Password</label>
-				<div class="controls">
-					<input type="password" name="old_password" id="old_password" placeholder="Old Password">
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="password">New Password</label>
-				<div class="controls">
-					<input type="password" name="password" id="password" placeholder="New Password">
-				</div>
-			</div>
-			<div class="control-group">
-				<label class="control-label" for="password_repeat">Repeat New Password</label>
-				<div class="controls">
-					<input type="password" name="password_repeat" id="password_repeat" placeholder="Repeat New Password">
-				</div>
-			</div>
-		</form>
-	</div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-		<button class="btn btn-primary" onClick="$('#change-password-form').trigger('submit');">Change Password</button>
-	</div>
-</div>
-
-<!-- Delete Account Modal -->
-<div id="delete-account" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="delete-account-label" aria-hidden="true">
-	<div class="modal-header">
-		<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-		<h3 id="myModalLabel">Delete Account</h3>
-	</div>
-	<div class="modal-body">
-		<form id="delete-account-form" class="form-horizontal" method="post" action="/delete">
-			<div class="control-group">
-				<label class="control-label" for="password">Confirm Password</label>
-				<div class="controls">
-					<input type="password" name="password" id="password" placeholder="Password">
-				</div>
-			</div>
-		</form>
-		<p>Are you really sure you want to <strong>delete</strong> your account? This cannot be undone and all your data will be lost!</p>
-	</div>
-	<div class="modal-footer">
-		<button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-		<button class="btn btn-danger" onClick="$('#delete-account-form').trigger('submit');">Delete</button>
-	</div>
-</div>
-
 <% else %>	
 	<form method="post" action="/login">
 		<input type="text" placeholder="Username" name="username"><br>

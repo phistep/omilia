@@ -141,8 +141,10 @@ post '/change-password' do
 
 		if params[:password] != params[:password_repeat]
 			flash[:error] = "Passwords did not match, try again!"
+			redirect request.referrer + '#change-password'
 		elsif password_correct? username, params[:old_password], db_user 
 			flash[:error] = "The password was wrong, try again!"
+			redirect request.referrer + '#change-password'
 		else
 			# change password
 			pw_salt = BCrypt::Engine.generate_salt
@@ -179,6 +181,7 @@ post '/delete' do
 			end 
 		else
 			flash[:error] = "The password was wrong, try again!"
+			redirect request.referrer + '#delete-account'
 		end	
 	end
 	redirect '/'
