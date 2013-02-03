@@ -28,6 +28,9 @@ a li.show{
 a.show:hover{
 	text-decoration: none;
 }
+a.show:focus{
+	outline: none;
+}
 
 ul.seasons, li.season{
 	list-style: none;
