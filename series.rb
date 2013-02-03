@@ -211,7 +211,7 @@ get '/search/:query' do
 end
 
 get '/show/:name' do
-	result = search_api params[:name]
+	result = search_api params[:name], false
 	if result == 'null' 
 		redirect to('/search/' + params[:name].first)
 	else
