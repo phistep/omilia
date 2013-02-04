@@ -5,11 +5,48 @@
 		<% 
 			result = JSON.parse(search_api(show.name, false))
 			total = result[result.keys.first]['episodes'].count
-			if show.episodes
-				watched = show.episodes.split(';').count
-			else
-				watched = 0
+
+			all_seasons = Array.new
+			result[result.keys.first]['episodes'].each do |episode|
+				all_seasons[episode['season']] ||= Array.new
+				all_seasons[episode['season']][episode['number']] = episode['name']
 			end
+			all_seasons.delete_if { |x| x.nil? }
+			all_seasons.each { |s| s.delete_if { |x| x.nil? } }
+
+			if show.episodes
+				watched_episodes = show.episodes.split(';')
+			else
+				watched_episodes = Array.new
+			end
+
+			arr_eps = Array.new
+			watched_episodes.each do |ep|
+				season, episode = ep.split('_')
+				arr_eps.push [season.to_i, episode.to_i]
+			end
+			arr_eps.sort! do |x, y|
+				if x[0] == y[0]
+					x[1] <=> y[1]
+				else
+					x[0] <=> y[0]
+				end
+			end
+			last_season = arr_eps.last[0]
+			last_episode = arr_eps.last[1]
+
+			if all_seasons[last_season-1].count > last_episode
+				next_season = last_season.to_s
+				next_episode = (last_episode + 1).to_s
+			elsif all_seasons.count > last_season
+				next_season = (last_season + 1).to_s
+				next_episode = '1'
+			else
+				next_season = nil 
+				next_episode = nil
+			end			
+
+			watched = watched_episodes.count
 			unwatched = total - watched
 			progress = (watched.to_f/total.to_f*100).round
 		%>
@@ -26,9 +63,12 @@
 				<strong><%== show.name %></strong>
 				(<%== result[result.keys.first]['year'] %>)
 				<% if unwatched == 0 %>
-				<span rel="tooltip" title="No unwatched episodes" class="badge pull-right"><i class="icon-ok icon-white"></i></span>
+				<span rel="tooltip" title="No unwatched episodes" class="badge pull-right unwatched"><i class="icon-ok icon-white"></i></span>
 				<% else %>
-				<span rel="tooltip" title="<%== unwatched %> unwatched episodes" class="badge pull-right"><%== unwatched %></span>
+				<span rel="tooltip" title="<%== unwatched %> unwatched episodes" class="badge pull-right unwatched"><%== unwatched %></span>
+					<% if next_season && next_episode %>
+						<button rel="tooltip" title="Mark s<%== next_season %>e<%== next_episode %> as watched" class="btn btn-mini pull-right next-up hidden-phone">next up: s<%== next_season %>e<%== next_episode %></button>
+					<% end %>
 				<% end %>
 			</li>
 		</a>
