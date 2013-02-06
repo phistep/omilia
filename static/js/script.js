@@ -180,23 +180,34 @@ $(document).ready(function(){
 	});
 
 
-	// watch ajax
-	$("input[type=checkbox].episode").on("change", function(event){
-		var tis = $(this);
+	// watching episodes
+	var watching = function(action, async, show, id, successCallback, errorCallback){
 		// js 1.7, does not work in Chrome
 		// https://developer.mozilla.org/en-US/docs/JavaScript/New_in_JavaScript/1.7#Destructuring_assignment_%28Merge_into_own_page.2Fsection%29
-		// var [season, episode] = tis.attr('id').split('_');
-		var season = tis.attr('id').split('_')[0];
-		var episode = tis.attr('id').split('_')[1];
-		var show = location.pathname.split('/').pop();
+		// var [season, episode] = id.split('_');
+		var season = id.split('_')[0];
+		var episode = id.split('_')[1];
 		$.ajax({
 			'url': '/show/' + show + '/' + season + '/' + episode,
 			'dataType': 'text',
-			'async': true,
-			'success': function(response){
+			'async': async,
+			'success': successCallback,
+			'error': errorCallback,
+			'type': action
+		});
+	}
+	
+	$('input[type=checkbox].episode').on('change', function(event){
+		var tis = $(this);
+		watching(
+			tis.prop('checked') ? 'PUT' : 'DELETE',
+			true,
+			location.pathname.split('/').pop(),
+			tis.attr('id'),
+			function(response){
 				console.log('success! ' + response);
 			},
-			'error': function(response){
+			function(response){
 				console.log('error! ' + response);
 				faving(
 					'PUT',
@@ -216,9 +227,28 @@ $(document).ready(function(){
 						}
 					}
 				);
-			 },
-			'type': tis.prop('checked') ? 'PUT' : 'DELETE'
-		});
+			}
+		);
+	});
+
+	$('button.next-up').on('click', function(event){
+		var tis = $(this);
+		tis.button('loading');
+		watching(
+			'PUT',
+			false,
+			tis.attr('show'),
+			tis.attr('next-up'),
+			function(response){
+				tis.button('reset');
+				tis.text('watched');
+			},
+			function(response){
+				console.log('error ' + response)
+				tis.button('reset');
+			}
+		);
+		return false;
 	});
 
 

@@ -67,7 +67,7 @@
 				<% else %>
 				<span rel="tooltip" title="<%== unwatched %> unwatched episodes" class="badge pull-right unwatched"><%== unwatched %></span>
 					<% if next_season && next_episode %>
-						<button rel="tooltip" title="Mark s<%== next_season %>e<%== next_episode %> as watched" class="btn btn-mini pull-right next-up hidden-phone">next up: s<%== next_season %>e<%== next_episode %></button>
+						<button rel="tooltip" title="Mark s<%== next_season %>e<%== next_episode %> as watched" next-up="<%== next_season %>_<%== next_episode %>" show="<%= URI.escape(show.name) %>" class="btn btn-mini pull-right next-up hidden-phone" data-loading-text="watching..." auto-complete="off">next up: s<%== next_season %>e<%== next_episode %></button>
 					<% end %>
 				<% end %>
 			</li>
