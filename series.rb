@@ -348,6 +348,80 @@ get '/suggest' do
 	JSON.generate(shows)
 end
 
+get '/info/:show' do
+	unless login?
+		status 403 # forbidden
+		halt
+	end
+	if @datasets.first(:name => params[:show]) && episodes = @datasets.first(:name => params[:show]).episodes
+		db_episodes = episodes
+	else
+		status 409 # conflict
+		halt
+	end
+
+	result = JSON.parse(search_api(params[:show], false))
+	total = result[result.keys.first]['episodes'].count
+
+	all_seasons = Array.new
+	result[result.keys.first]['episodes'].each do |episode|
+		all_seasons[episode['season']] ||= Array.new
+		all_seasons[episode['season']][episode['number']] = episode['name']
+	end
+	all_seasons.delete_if { |x| x.nil? }
+	all_seasons.each { |s| s.delete_if { |x| x.nil? } }
+
+	if db_episodes
+		watched_episodes = db_episodes.split(';')
+	else
+		watched_episodes = Array.new
+	end
+
+	arr_eps = Array.new
+	watched_episodes.each do |ep|
+		season, episode = ep.split('_')
+		arr_eps.push [season.to_i, episode.to_i]
+	end
+	arr_eps.sort! do |x, y|
+		if x[0] == y[0]
+			x[1] <=> y[1]
+		else
+			x[0] <=> y[0]
+		end
+	end
+
+	last_season = arr_eps.last[0]
+	last_episode = arr_eps.last[1]
+
+	if all_seasons[last_season-1].count > last_episode
+		next_season = last_season
+		next_episode = last_episode + 1
+	elsif all_seasons.count > last_season
+		next_season = last_season + 1
+		next_episode = 1
+	else
+		next_season = 0 
+		next_episode = 0
+	end			
+
+	watched = watched_episodes.count
+	unwatched = total - watched
+	progress = (watched.to_f/total.to_f*100).round
+
+	info_hash = {
+		'name' => params[:show],
+		'next_season' => next_season,
+		'next_episode' => next_episode,
+		'next_id' => "#{next_season}_#{next_episode}",
+		'watched' => watched,
+		'unwatched' => unwatched,
+		'progress' => progress
+	}
+
+	content_type :json
+	JSON.generate(info_hash)
+end
+
 put '/collapse/:name/:season' do
 	unless login?
 		status 403 # forbidden

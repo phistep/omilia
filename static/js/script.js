@@ -34,7 +34,7 @@ $(document).ready(function(){
 	var suggestions = [];
 	$.ajax({
 		'url': '/suggest',
-		dataType: 'json',
+		'dataType': 'json',
 		'async': false,
 		'success': function(response){
 			suggestions = response;
@@ -240,8 +240,38 @@ $(document).ready(function(){
 			tis.attr('show'),
 			tis.attr('next-up'),
 			function(response){
-				tis.button('reset');
-				tis.text('watched');
+				var info;
+				$.ajax({
+					'url': '/info/' + tis.attr('show'),
+					'dataType': 'json',
+					'async': false,
+					'success': function(response){ info = response},
+					'error': function(response){info = null},
+					'type': 'GET'
+				});
+				if(info){
+					if(info.unwatched){
+						tis.attr('next-up', info.next_id);
+						tis.siblings('.badge.unwatched').text(info.unwatched);
+						tis.siblings('.badge.unwatched').tooltip('destroy');
+						tis.siblings('.badge.unwatched').attr('title', info.unwatched + ' unwatched episodes');
+						tis.siblings('.badge.unwatched').tooltip();
+						tis.tooltip('destroy');
+						tis.attr('title', 'Mark s' + info.next_season + 'e' + info.next_episode + ' as watched')
+						tis.tooltip();
+						tis.button('reset');
+						tis.text('next up: s' + info.next_season + 'e' + info.next_episode);
+					} else {
+						tis.siblings('.badge.unwatched').html('<i class="icon-ok icon-white"></i>');
+						tis.siblings('.badge.unwatched').tooltip('destroy');
+						tis.siblings('.badge.unwatched').attr('title', 'No unwatched episodes');
+						tis.siblings('.badge.unwatched').tooltip();
+						tis.tooltip('destroy');
+						tis.remove();
+					}
+				} else {
+					tis.button('reset');
+				}
 			},
 			function(response){
 				console.log('error ' + response)
