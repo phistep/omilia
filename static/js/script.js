@@ -180,6 +180,23 @@ $(document).ready(function(){
 	});
 
 
+	// update info
+	var set_gradient = function(element, progress){
+		element.css({
+			'background' :	'-webkit-gradient(linear, left top, right top, color-stop(' + progress + '% ,rgba(0, 0, 0, .05)), color-stop(' + progress + '%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),' +
+							'-webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(255, 255, 255)), color-stop(100%, rgb(242, 242, 242)))'
+		});
+		element.css({
+			'background' :	'-webkit-linear-gradient(left,      rgba(0, 0, 0, .05) ' + progress + '%, rgba(0, 0, 0, 0) ' + progress + '%, rgba(0, 0, 0, 0)),' +
+							'-webkit-linear-gradient(top,       rgb(255, 255, 255), rgb(242, 242, 242))'
+		});
+		element.css({
+			'background' :	        'linear-gradient(to right,  rgba(0, 0, 0, .05) ' + progress + '%, rgba(0, 0, 0, 0) ' + progress + '%, rgba(0, 0, 0, 0)),' +
+							        'linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242))'
+		}); 
+	}
+
+
 	// watching episodes
 	var watching = function(action, async, show, id, successCallback, errorCallback){
 		// js 1.7, does not work in Chrome
@@ -259,6 +276,7 @@ $(document).ready(function(){
 						tis.tooltip('destroy');
 						tis.attr('title', 'Mark s' + info.next_season + 'e' + info.next_episode + ' as watched')
 						tis.tooltip();
+						set_gradient(tis.parent(), info.progress);
 						tis.button('reset');
 						tis.text('next up: s' + info.next_season + 'e' + info.next_episode);
 					} else {
@@ -266,6 +284,7 @@ $(document).ready(function(){
 						tis.siblings('.badge.unwatched').tooltip('destroy');
 						tis.siblings('.badge.unwatched').attr('title', 'No unwatched episodes');
 						tis.siblings('.badge.unwatched').tooltip();
+						set_gradient(tis.parent(), info.progress);
 						tis.tooltip('destroy');
 						tis.remove();
 					}
