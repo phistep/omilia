@@ -34,7 +34,7 @@ $(document).ready(function(){
 	var suggestions = [];
 	$.ajax({
 		'url': '/suggest',
-		dataType: 'json',
+		'dataType': 'json',
 		'async': false,
 		'success': function(response){
 			suggestions = response;
@@ -180,23 +180,51 @@ $(document).ready(function(){
 	});
 
 
-	// watch ajax
-	$("input[type=checkbox].episode").on("change", function(event){
-		var tis = $(this);
+	// update info
+	var set_gradient = function(element, progress){
+		element.css({
+			'background' :	'-webkit-gradient(linear, left top, right top, color-stop(' + progress + '% ,rgba(0, 0, 0, .05)), color-stop(' + progress + '%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),' +
+							'-webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(255, 255, 255)), color-stop(100%, rgb(242, 242, 242)))'
+		});
+		element.css({
+			'background' :	'-webkit-linear-gradient(left,      rgba(0, 0, 0, .05) ' + progress + '%, rgba(0, 0, 0, 0) ' + progress + '%, rgba(0, 0, 0, 0)),' +
+							'-webkit-linear-gradient(top,       rgb(255, 255, 255), rgb(242, 242, 242))'
+		});
+		element.css({
+			'background' :	        'linear-gradient(to right,  rgba(0, 0, 0, .05) ' + progress + '%, rgba(0, 0, 0, 0) ' + progress + '%, rgba(0, 0, 0, 0)),' +
+							        'linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242))'
+		}); 
+	}
+
+
+	// watching episodes
+	var watching = function(action, async, show, id, successCallback, errorCallback){
 		// js 1.7, does not work in Chrome
 		// https://developer.mozilla.org/en-US/docs/JavaScript/New_in_JavaScript/1.7#Destructuring_assignment_%28Merge_into_own_page.2Fsection%29
-		// var [season, episode] = tis.attr('id').split('_');
-		var season = tis.attr('id').split('_')[0];
-		var episode = tis.attr('id').split('_')[1];
-		var show = location.pathname.split('/').pop();
+		// var [season, episode] = id.split('_');
+		var season = id.split('_')[0];
+		var episode = id.split('_')[1];
 		$.ajax({
 			'url': '/show/' + show + '/' + season + '/' + episode,
 			'dataType': 'text',
-			'async': true,
-			'success': function(response){
+			'async': async,
+			'success': successCallback,
+			'error': errorCallback,
+			'type': action
+		});
+	}
+	
+	$('input[type=checkbox].episode').on('change', function(event){
+		var tis = $(this);
+		watching(
+			tis.prop('checked') ? 'PUT' : 'DELETE',
+			true,
+			show = location.pathname.split('/').pop(),
+			tis.attr('id'),
+			function(response){
 				console.log('success! ' + response);
 			},
-			'error': function(response){
+			function(response){
 				console.log('error! ' + response);
 				faving(
 					'PUT',
@@ -207,6 +235,22 @@ $(document).ready(function(){
 						btn.addClass('remove');
 						btn.removeClass('add');
 						btn.text('Remove from favorites');
+						watching(
+							tis.prop('checked') ? 'PUT' : 'DELETE',
+							true,
+							show,
+							tis.attr('id'),
+							function(response){
+								console.log('success! ' + response);
+							},
+							function(res){
+								if (tis.prop('checked')){
+									tis.prop('checked', false);
+								} else {
+									tis.prop('checked', true);
+								}
+							}
+						);
 					},
 					function(res){
 						if (tis.prop('checked')){
@@ -216,9 +260,68 @@ $(document).ready(function(){
 						}
 					}
 				);
-			 },
-			'type': tis.prop('checked') ? 'PUT' : 'DELETE'
-		});
+			}
+		);
+	});
+
+	$('button.next-up').on('click', function(event){
+		var tis = $(this);
+		tis.button('loading');
+		watching(
+			'PUT',
+			false,
+			tis.attr('show'),
+			tis.attr('next-up'),
+			function(response){
+				var info;
+				$.ajax({
+					'url': '/info/' + tis.attr('show'),
+					'dataType': 'json',
+					'async': false,
+					'success': function(response){ info = response},
+					'error': function(response){info = null},
+					'type': 'GET'
+				});
+				if(info){
+					if(info.unwatched && info.next_season && info.next_episode){
+						tis.attr('next-up', info.next_id);
+						tis.siblings('.badge.unwatched').text(info.unwatched);
+						tis.siblings('.badge.unwatched').tooltip('destroy');
+						tis.siblings('.badge.unwatched').attr('title', info.unwatched + ' unwatched episodes');
+						tis.siblings('.badge.unwatched').tooltip();
+						tis.tooltip('destroy');
+						tis.attr('title', 'Mark s' + info.next_season + 'e' + info.next_episode + ' as watched')
+						tis.tooltip();
+						set_gradient(tis.parent(), info.progress);
+						tis.button('reset');
+						tis.text('next up: s' + info.next_season + 'e' + info.next_episode);
+					} else if(info.unwatched && !info.next_season && !info.next_episode){
+						tis.siblings('.badge.unwatched').text(info.unwatched);
+						tis.siblings('.badge.unwatched').tooltip('destroy');
+						tis.siblings('.badge.unwatched').attr('title', info.unwatched + ' unwatched episodes');
+						tis.siblings('.badge.unwatched').tooltip();
+						set_gradient(tis.parent(), info.progress);
+						tis.tooltip('destroy');
+						tis.remove();
+					} else {
+						tis.siblings('.badge.unwatched').html('<i class="icon-ok icon-white"></i>');
+						tis.siblings('.badge.unwatched').tooltip('destroy');
+						tis.siblings('.badge.unwatched').attr('title', 'No unwatched episodes');
+						tis.siblings('.badge.unwatched').tooltip();
+						set_gradient(tis.parent(), info.progress);
+						tis.tooltip('destroy');
+						tis.remove();
+					}
+				} else {
+					tis.button('reset');
+				}
+			},
+			function(response){
+				console.log('error ' + response)
+				tis.button('reset');
+			}
+		);
+		return false;
 	});
 
 
