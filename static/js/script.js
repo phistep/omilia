@@ -267,7 +267,7 @@ $(document).ready(function(){
 					'type': 'GET'
 				});
 				if(info){
-					if(info.unwatched){
+					if(info.unwatched && info.next_season && info.next_episode){
 						tis.attr('next-up', info.next_id);
 						tis.siblings('.badge.unwatched').text(info.unwatched);
 						tis.siblings('.badge.unwatched').tooltip('destroy');
@@ -279,6 +279,14 @@ $(document).ready(function(){
 						set_gradient(tis.parent(), info.progress);
 						tis.button('reset');
 						tis.text('next up: s' + info.next_season + 'e' + info.next_episode);
+					} else if(info.unwatched && !info.next_season && !info.next_episode){
+						tis.siblings('.badge.unwatched').text(info.unwatched);
+						tis.siblings('.badge.unwatched').tooltip('destroy');
+						tis.siblings('.badge.unwatched').attr('title', info.unwatched + ' unwatched episodes');
+						tis.siblings('.badge.unwatched').tooltip();
+						set_gradient(tis.parent(), info.progress);
+						tis.tooltip('destroy');
+						tis.remove();
 					} else {
 						tis.siblings('.badge.unwatched').html('<i class="icon-ok icon-white"></i>');
 						tis.siblings('.badge.unwatched').tooltip('destroy');
