@@ -390,8 +390,13 @@ get '/info/:show' do
 		end
 	end
 
-	last_season = arr_eps.last[0]
-	last_episode = arr_eps.last[1]
+	if arr_eps.last
+		last_season = arr_eps.last[0]
+		last_episode = arr_eps.last[1]
+	else
+		last_season = 1
+		last_episode = 0
+	end
 
 	if all_seasons[last_season-1].count > last_episode
 		next_season = last_season
