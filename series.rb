@@ -356,6 +356,7 @@ put '/show/:name/:season/:episode', :login => true do
 	user = User.first(:name => username)
 	unless show = user.datasets.first(:name => params[:name])
 		status 409 # conflict
+		halt
 	end
 	show = user.datasets.first(:name => params[:name])
 	id = params[:season] + '_' + params[:episode]
