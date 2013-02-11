@@ -6,7 +6,7 @@ require 'bcrypt' # bcrypt-ruby
 require 'rack-flash' # rack-flash3
 
 require 'data_mapper'
-DataMapper::Logger.new($stdout, :debug)
+DataMapper::Logger.new($stdout, :debug) if development?
 require './models/dataset'
 require './models/user'
 DataMapper.setup(:default, "sqlite://#{Dir.pwd}/database.db")
@@ -142,6 +142,12 @@ helpers do
 	end
 end
 
+set :login do |status|
+	condition do
+		redirect '/' unless login? == status
+	end
+end
+
 before do
 	if params.has_key? 'search'
 		redirect to("/search/#{URI.escape(params['search'])}")
@@ -163,57 +169,54 @@ get '/' do
 	erb :home
 end
 
-post '/login' do
-	unless login? #or params[:username] or params[:password] or params[:password_repeat].nil?
-		if params[:password_repeat].empty?
-			# login
-	 		if password_correct? params[:username], params[:password]
-				session[:username] = params[:username]
-				flash[:notice] = "Welcome #{username}!"
-			else
-				flash[:error] = "Username or password wrong!"
-			end
+post '/login', :login => false do
+	if params[:password_repeat].empty?
+		# login
+		if password_correct? params[:username], params[:password]
+			session[:username] = params[:username]
+			flash[:notice] = "Welcome #{username}!"
 		else
-			# register	
-			db_user= User.first(:name => params[:username])
-			
-			if params[:password] != params[:password_repeat]
-				flash[:error] = "Passwords did not match, try again!"
-			elsif not db_user.nil?
-				flash[:error] = "Unfortunately the username \"#{params[:username]}\" has been taken already. Please choose a different one."
+			flash[:error] = "Username or password wrong!"
+		end
+	else
+		# register	
+		db_user= User.first(:name => params[:username])
+		
+		if params[:password] != params[:password_repeat]
+			flash[:error] = "Passwords did not match, try again!"
+		elsif not db_user.nil?
+			flash[:error] = "Unfortunately the username \"#{params[:username]}\" has been taken already. Please choose a different one."
+		else
+			pw_salt = BCrypt::Engine.generate_salt
+			pw_hash = BCrypt::Engine.hash_secret(params[:password], pw_salt)
+
+			new_user = User.new(
+				:name => params[:username],
+				:pw_salt => pw_salt,
+				:pw_hash => pw_hash, 
+			)
+
+			if new_user.save
+				session[:username] = params[:username]
+				flash[:notice] = "Congratulations, #{params[:username]}, you have been registered sucessfully! Have a good time watchin'!"
 			else
-				pw_salt = BCrypt::Engine.generate_salt
-				pw_hash = BCrypt::Engine.hash_secret(params[:password], pw_salt)
-
-				new_user = User.new(
-					:name => params[:username],
-					:pw_salt => pw_salt,
-					:pw_hash => pw_hash, 
-				)
-
-				if new_user.save
-					session[:username] = params[:username]
-					flash[:notice] = "Congratulations, #{params[:username]}, you have been registered sucessfully! Have a good time watchin'!"
-				else
-					new_user.errors.each do |error|
-						puts error
-					end
-					flash[:error] = "An unkown error occured."
+				new_user.errors.each do |error|
+					puts error
 				end
+				flash[:error] = "An unkown error occured."
 			end
-
 		end
 	end
 	redirect '/'
 end
 
-get '/logout' do
-	session[:username] = nil if login?
+get '/logout', :login => true do
+	session[:username] = nil
 	redirect '/'
 end
 
-post '/change-password' do
-	if login? and params[:old_password] and params[:password] and params[:password_repeat]
+post '/change-password', :login => true do
+	if params[:old_password] and params[:password] and params[:password_repeat]
 		db_user = User.first(:name => username)
 
 		if params[:password] != params[:password_repeat]
@@ -245,9 +248,9 @@ post '/change-password' do
 	redirect '/'
 end
 
-post '/delete' do
+post '/delete', :login => true do
 	# if login? and confirm_pw is correct then delete account and logout
-	if login? and params[:password]
+	if params[:password]
 		user = User.first(:name => username)
 		if password_correct? username, params[:password], user	
 			if user.datasets.all.destroy && user.destroy
@@ -325,12 +328,12 @@ get '/show/:name' do
 
 end
 
-put '/show/:name' do
+put '/show/:name', :login => true do
 	# save show as favorite
 	status save_show params[:name]
 end
 
-delete '/show/:name' do
+delete '/show/:name', :login => true do
 	# delete show from favorites
 	user = User.first(:name => username)
 	if user.datasets.all(:name => params[:name]).empty?
@@ -344,12 +347,8 @@ delete '/show/:name' do
 	end
 end
 
-put '/show/:name/:season/:episode' do
+put '/show/:name/:season/:episode', :login => true do
 	# mark :season/:episode as watched
-	unless login?
-		status 403 # forbidden
-		halt
-	end
 	user = User.first(:name => username)
 	unless show = user.datasets.first(:name => params[:name])
 		status 409 # conflict
@@ -375,12 +374,8 @@ put '/show/:name/:season/:episode' do
 	end
 end
 
-delete '/show/:name/:season/:episode' do
+delete '/show/:name/:season/:episode', :login => true do
 	# mark :season/:episode as unwatched
-	unless login?
-		status 403 # forbidden
-		halt
-	end
 	user = User.first(:name => username)
 	if show = user.datasets.first(:name => params[:name])
 		id = params[:season] + '_' + params[:episode] 
@@ -421,7 +416,7 @@ get '/suggest' do
 	JSON.generate(shows)
 end
 
-get '/info/:show' do
+get '/info/:show', :login => true do
 	info_hash = show_info(params[:show])
 	if info_hash.is_a?(Hash)
 		content_type :json
@@ -431,11 +426,7 @@ get '/info/:show' do
 	end
 end
 
-put '/collapse/:name/:season' do
-	unless login?
-		status 403 # forbidden
-		halt
-	end
+put '/collapse/:name/:season', :login => true do
 	user = User.first(:name => username)
 	if show = user.datasets.first(:name => params[:name])
 		show = user.datasets.first(:name => params[:name])
@@ -460,11 +451,7 @@ put '/collapse/:name/:season' do
 	end
 end
 
-delete '/collapse/:name/:season' do
-	unless login?
-		status 403 # forbidden
-		halt
-	end
+delete '/collapse/:name/:season', :login => true do
 	user = User.first(:name => username)
 	if show = user.datasets.first(:name => params[:name])
 		if show.collapsed.include? params[:season]
