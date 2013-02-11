@@ -287,7 +287,7 @@ $(document).ready(function(){
 						tis.attr('next-up', info.next_id);
 						tis.siblings('.badge.unwatched').text(info.unwatched);
 						tis.siblings('.badge.unwatched').tooltip('destroy');
-						tis.siblings('.badge.unwatched').attr('title', info.unwatched + ' unwatched episodes');
+						tis.siblings('.badge.unwatched').attr('title', info.unwatched + ' unwatched episode' + (info.unwatched > 1 ? 's' : ''));
 						tis.siblings('.badge.unwatched').tooltip();
 						tis.tooltip('destroy');
 						tis.attr('title', 'Mark s' + info.next_season + 'e' + info.next_episode + ' as watched')
@@ -298,7 +298,7 @@ $(document).ready(function(){
 					} else if(info.unwatched && !info.next_season && !info.next_episode){
 						tis.siblings('.badge.unwatched').text(info.unwatched);
 						tis.siblings('.badge.unwatched').tooltip('destroy');
-						tis.siblings('.badge.unwatched').attr('title', info.unwatched + ' unwatched episodes');
+						tis.siblings('.badge.unwatched').attr('title', info.unwatched + ' unwatched episode' + (info.unwatched > 1 ? 's' : ''));
 						tis.siblings('.badge.unwatched').tooltip();
 						set_gradient(tis.parent(), info.progress);
 						tis.tooltip('destroy');
