@@ -2,72 +2,25 @@
 <div class="row-fluid">
 	<ul class="span8 offset2">
 	<% @favorites.each do |show| %>
-		<% 
-			result = JSON.parse(search_api(show.name, false))
-			total = result[result.keys.first]['episodes'].count
-
-			all_seasons = Array.new
-			result[result.keys.first]['episodes'].each do |episode|
-				all_seasons[episode['season']] ||= Array.new
-				all_seasons[episode['season']][episode['number']] = episode['name']
-			end
-			all_seasons.delete_if { |x| x.nil? }
-			all_seasons.each { |s| s.delete_if { |x| x.nil? } }
-
-			if show.episodes
-				watched_episodes = show.episodes.split(';')
-			else
-				watched_episodes = Array.new
-			end
-
-			arr_eps = Array.new
-			watched_episodes.each do |ep|
-				season, episode = ep.split('_')
-				arr_eps.push [season.to_i, episode.to_i]
-			end
-			arr_eps.sort! do |x, y|
-				if x[0] == y[0]
-					x[1] <=> y[1]
-				else
-					x[0] <=> y[0]
-				end
-			end
-			last_season = arr_eps.last[0]
-			last_episode = arr_eps.last[1]
-
-			if all_seasons[last_season-1].count > last_episode
-				next_season = last_season.to_s
-				next_episode = (last_episode + 1).to_s
-			elsif all_seasons.count > last_season
-				next_season = (last_season + 1).to_s
-				next_episode = '1'
-			else
-				next_season = nil 
-				next_episode = nil
-			end			
-
-			watched = watched_episodes.count
-			unwatched = total - watched
-			progress = (watched.to_f/total.to_f*100).round
-		%>
+		<% info = show_info(show['name']) %>
 		<a href="<%= to('/show/'+show.name) %>" class="show">
 			<li class="show home" style="
-					background: -webkit-gradient(linear, left top, right top, color-stop(<%== progress %>% ,rgba(0, 0, 0, .05)), color-stop(<%== progress %>%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),
+					background: -webkit-gradient(linear, left top, right top, color-stop(<%== info[:progress] %>% ,rgba(0, 0, 0, .05)), color-stop(<%== info[:progress] %>%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),
 					            -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(255, 255, 255)), color-stop(100%, rgb(242, 242, 242)));
-					background: -webkit-linear-gradient(left,      rgba(0, 0, 0, .05) <%== progress %>%, rgba(0, 0, 0, 0) <%== progress %>%, rgba(0, 0, 0, 0)),
+					background: -webkit-linear-gradient(left,      rgba(0, 0, 0, .05) <%== info[:progress] %>%, rgba(0, 0, 0, 0) <%== info[:progress] %>%, rgba(0, 0, 0, 0)),
 					            -webkit-linear-gradient(top,       rgb(255, 255, 255), rgb(242, 242, 242));
-					background:         linear-gradient(to right,  rgba(0, 0, 0, .05) <%== progress %>%, rgba(0, 0, 0, 0) <%== progress %>%, rgba(0, 0, 0, 0)),
+					background:         linear-gradient(to right,  rgba(0, 0, 0, .05) <%== info[:progress] %>%, rgba(0, 0, 0, 0) <%== info[:progress] %>%, rgba(0, 0, 0, 0)),
 					                    linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));
 			">
 				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
 				<strong><%== show.name %></strong>
-				<span class="hidden-phone">(<%== result[result.keys.first]['year'] %>)</span>
-				<% if unwatched == 0 %>
+				<span class="hidden-phone">(<%== info[:year] %>)</span>
+				<% if info[:unwatched] == 0 %>
 				<span rel="tooltip" title="No unwatched episodes" class="badge pull-right unwatched"><i class="icon-ok icon-white"></i></span>
 				<% else %>
-				<span rel="tooltip" title="<%== unwatched %> unwatched episodes" class="badge pull-right unwatched"><%== unwatched %></span>
-					<% if next_season && next_episode %>
-						<button rel="tooltip" title="Mark s<%== next_season %>e<%== next_episode %> as watched" next-up="<%== next_season %>_<%== next_episode %>" show="<%= URI.escape(show.name) %>" class="btn btn-mini pull-right next-up" data-loading-text="watching..." auto-complete="off">next up: s<%== next_season %>e<%== next_episode %></button>
+				<span rel="tooltip" title="<%== info[:unwatched] %> unwatched episodes" class="badge pull-right unwatched"><%== info[:unwatched] %></span>
+					<% if info[:next_season] && info[:next_episode] %>
+						<button rel="tooltip" title="Mark s<%== info[:next_season] %>e<%== info[:next_episode] %> as watched" next-up="<%== info[:next_season] %>_<%== info[:next_episode] %>" show="<%= URI.escape(show.name) %>" class="btn btn-mini pull-right next-up" data-loading-text="watching&hellip;" auto-complete="off">next up: s<%== info[:next_season] %>e<%== info[:next_episode] %></button>
 					<% end %>
 				<% end %>
 			</li>
