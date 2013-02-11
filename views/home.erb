@@ -2,33 +2,26 @@
 <div class="row-fluid">
 	<ul class="span8 offset2">
 	<% @favorites.each do |show| %>
-		<% 
-			result = JSON.parse(search_api(show.name, false))
-			total = result[result.keys.first]['episodes'].count
-			if show.episodes
-				watched = show.episodes.split(';').count
-			else
-				watched = 0
-			end
-			unwatched = total - watched
-			progress = (watched.to_f/total.to_f*100).round
-		%>
+		<% info = show_info(show['name']) %>
 		<a href="<%= to('/show/'+show.name) %>" class="show">
 			<li class="show home" style="
-					background: -webkit-gradient(linear, left top, right top, color-stop(<%== progress %>% ,rgba(0, 0, 0, .05)), color-stop(<%== progress %>%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),
+					background: -webkit-gradient(linear, left top, right top, color-stop(<%== info[:progress] %>% ,rgba(0, 0, 0, .05)), color-stop(<%== info[:progress] %>%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),
 					            -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(255, 255, 255)), color-stop(100%, rgb(242, 242, 242)));
-					background: -webkit-linear-gradient(left,      rgba(0, 0, 0, .05) <%== progress %>%, rgba(0, 0, 0, 0) <%== progress %>%, rgba(0, 0, 0, 0)),
+					background: -webkit-linear-gradient(left,      rgba(0, 0, 0, .05) <%== info[:progress] %>%, rgba(0, 0, 0, 0) <%== info[:progress] %>%, rgba(0, 0, 0, 0)),
 					            -webkit-linear-gradient(top,       rgb(255, 255, 255), rgb(242, 242, 242));
-					background:         linear-gradient(to right,  rgba(0, 0, 0, .05) <%== progress %>%, rgba(0, 0, 0, 0) <%== progress %>%, rgba(0, 0, 0, 0)),
+					background:         linear-gradient(to right,  rgba(0, 0, 0, .05) <%== info[:progress] %>%, rgba(0, 0, 0, 0) <%== info[:progress] %>%, rgba(0, 0, 0, 0)),
 					                    linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));
 			">
 				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
 				<strong><%== show.name %></strong>
-				(<%== result[result.keys.first]['year'] %>)
-				<% if unwatched == 0 %>
-				<span rel="tooltip" title="No unwatched episodes" class="badge pull-right"><i class="icon-ok icon-white"></i></span>
+				<span class="hidden-phone">(<%== info[:year] %>)</span>
+				<% if info[:unwatched] == 0 %>
+				<span rel="tooltip" title="No unwatched episodes" class="badge pull-right unwatched"><i class="icon-ok icon-white"></i></span>
 				<% else %>
-				<span rel="tooltip" title="<%== unwatched %> unwatched episodes" class="badge pull-right"><%== unwatched %></span>
+				<span rel="tooltip" title="<%== info[:unwatched] %> unwatched episodes" class="badge pull-right unwatched"><%== info[:unwatched] %></span>
+					<% if info[:next_season] && info[:next_episode] %>
+						<button rel="tooltip" title="Mark s<%== info[:next_season] %>e<%== info[:next_episode] %> as watched" next-up="<%== info[:next_season] %>_<%== info[:next_episode] %>" show="<%= URI.escape(show.name) %>" class="btn btn-mini pull-right next-up" data-loading-text="watching&hellip;" auto-complete="off">next up: s<%== info[:next_season] %>e<%== info[:next_episode] %></button>
+					<% end %>
 				<% end %>
 			</li>
 		</a>

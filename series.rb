@@ -67,6 +67,79 @@ helpers do
 			return 409 # conflict
 		end
 	end
+
+	def show_info name
+		return 403 unless login?
+		if @datasets.first(:name => name) && episodes = @datasets.first(:name => name).episodes
+			db_episodes = episodes
+		else
+			return 409 # conflict
+		end
+
+		result = JSON.parse(search_api(name, false))
+		total = result[result.keys.first]['episodes'].count
+
+		all_seasons = Array.new
+		result[result.keys.first]['episodes'].each do |episode|
+			all_seasons[episode['season']] ||= Array.new
+			all_seasons[episode['season']][episode['number']] = episode['name']
+		end
+		all_seasons.delete_if { |x| x.nil? }
+		all_seasons.each { |s| s.delete_if { |x| x.nil? } }
+
+		if db_episodes
+			watched_episodes = db_episodes.split(';')
+		else
+			watched_episodes = Array.new
+		end
+
+		arr_eps = Array.new
+		watched_episodes.each do |ep|
+			season, episode = ep.split('_')
+			arr_eps.push [season.to_i, episode.to_i]
+		end
+		arr_eps.sort! do |x, y|
+			if x[0] == y[0]
+				x[1] <=> y[1]
+			else
+				x[0] <=> y[0]
+			end
+		end
+
+		if arr_eps.last
+			last_season = arr_eps.last[0]
+			last_episode = arr_eps.last[1]
+		else
+			last_season = 1
+			last_episode = 0
+		end
+
+		if all_seasons[last_season-1].count > last_episode
+			next_season = last_season
+			next_episode = last_episode + 1
+		elsif all_seasons.count > last_season
+			next_season = last_season + 1
+			next_episode = 1
+		else
+			next_season = 0
+			next_episode = 0
+		end
+
+		watched = watched_episodes.count
+		unwatched = total - watched
+		progress = (watched.to_f/total.to_f*100).round
+
+		return info_hash = {
+			:name => name,
+			:year => result[result.keys.first]['year'],
+			:next_season => next_season,
+			:next_episode => next_episode,
+			:next_id => "#{next_season}_#{next_episode}",
+			:watched => watched,
+			:unwatched => unwatched,
+			:progress => progress
+		}
+	end
 end
 
 before do
@@ -346,6 +419,16 @@ get '/suggest' do
 	end
 	content_type :json
 	JSON.generate(shows)
+end
+
+get '/info/:show' do
+	info_hash = show_info(params[:show])
+	if info_hash.is_a?(Hash)
+		content_type :json
+		JSON.generate(info_hash)
+	else
+		status info_hash
+	end
 end
 
 put '/collapse/:name/:season' do

@@ -48,6 +48,14 @@ a.show:focus{
 	outline: none;
 }
 
+.btn.next-up{
+	margin-right: 5px;
+	margin-top: -1px;
+}
+.badge.unwatched{
+	margin-top: 1px;
+}
+
 div.dropdown h4{
 	display: inline;
 }
