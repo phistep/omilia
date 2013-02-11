@@ -2,7 +2,13 @@
 <div class="row-fluid">
 	<ul class="span8 offset2">
 	<% @favorites.each do |show| %>
-		<% info = show_info(show['name']) %>
+		<%
+			info = show_info(show['name'])
+			unless info.is_a?(Hash)
+				status 500
+				halt
+			end
+		%>
 		<a href="<%= to('/show/'+show.name) %>" class="show">
 			<li class="show home" style="
 					background: -webkit-gradient(linear, left top, right top, color-stop(<%== info[:progress] %>% ,rgba(0, 0, 0, .05)), color-stop(<%== info[:progress] %>%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),

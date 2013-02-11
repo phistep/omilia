@@ -70,8 +70,12 @@ helpers do
 
 	def show_info name
 		return 403 unless login?
-		if @datasets.first(:name => name) && episodes = @datasets.first(:name => name).episodes
-			db_episodes = episodes
+		if @datasets.first(:name => name)
+			if episodes = @datasets.first(:name => name).episodes
+				db_episodes = episodes
+			else
+				db_episodes = String.new
+			end
 		else
 			return 409 # conflict
 		end
