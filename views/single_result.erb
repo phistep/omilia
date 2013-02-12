@@ -4,6 +4,13 @@
 <% if login? %>
 	<% if @datasets.first(:name => @show_name) %>
 		<button id="favbtn" class="btn fav remove" show="<%= URI.escape(@show_name) %>">Remove from favorites</button>
+		<form action="/url/<%= URI.escape(@show_name) %>" method="post">
+			<div class="input-prepend input-append">
+				<button class="btn" type="button"><i class="icon-info-sign"></i></button>
+				<input type="text" name="url" placeholder="Custom Show URL" value="<%== @custom_url %>">
+				<button class="btn" type="submit"><i class="icon-refresh"></i></button>
+			</div>
+		</form>
 	<% else %>
 		<button id="favbtn" class="btn fav add" show="<%= URI.escape(@show_name) %>">Add to favorites</button>
 	<% end %>
