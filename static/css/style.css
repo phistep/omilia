@@ -46,6 +46,7 @@ a.show:hover{
 }
 a.show:focus{
 	outline: none;
+	text-decoration: none;
 }
 
 .btn.next-up{
