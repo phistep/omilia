@@ -25,7 +25,7 @@
 				<span rel="tooltip" title="No unwatched episodes" class="badge pull-right unwatched"><i class="icon-ok icon-white"></i></span>
 				<% else %>
 				<span rel="tooltip" title="<%== info[:unwatched] %> unwatched episode<%== if info[:unwatched] > 1 then 's' end %>" class="badge pull-right unwatched"><%== info[:unwatched] %></span>
-					<% if info[:next_season] && info[:next_episode] %>
+					<% if info[:next_season] != 0 and info[:next_episode] != 0 %>
 						<button rel="tooltip" title="Mark s<%== info[:next_season] %>e<%== info[:next_episode] %> as watched" next-up="<%== info[:next_season] %>_<%== info[:next_episode] %>" show="<%= URI.escape(show.name) %>" class="btn btn-mini pull-right next-up" data-loading-text="watching&hellip;" auto-complete="off">next up: s<%== info[:next_season] %>e<%== info[:next_episode] %></button>
 					<% end %>
 				<% end %>
