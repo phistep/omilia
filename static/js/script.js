@@ -218,7 +218,7 @@ $(document).ready(function(){
 		var tis = $(this);
 		watching(
 			tis.prop('checked') ? 'PUT' : 'DELETE',
-			true,
+			tis.prop('no-async') ? false : true,
 			show = location.pathname.split('/').pop(),
 			tis.attr('id'),
 			function(response){
@@ -327,7 +327,7 @@ $(document).ready(function(){
 
 	// mark all in season as watched
 	$('a[watch-season]').on('click', function(){
-		$('input[type=checkbox].episode[id^=' +$(this).attr('watch-season') + '_]:not(:checked)').trigger('click');
+		$('input[type=checkbox].episode[id^=' +$(this).attr('watch-season') + '_]:not(:checked)').prop('no-async', true).trigger('click').prop('no-sync', false);
 	});
 
 
