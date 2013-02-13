@@ -15,9 +15,8 @@ div.tooltip-inner{
 	margin-bottom: 0px;
 }
 
-#search-form{
-	margin: 0 auto;
-	float: none;
+#search-form .input-append{
+	width: 100%;
 }
 
 li.show {
