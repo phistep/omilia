@@ -489,9 +489,7 @@ delete '/collapse/:name/:season', :login => true do
 end
 
 post '/url/:name', :login => true do
-	if params[:url].gsub(/%0*[se]/, '') !~ URI::ABS_URI
-		flash[:error] = 'This was not a valid URL.'
-	else
+	if params[:url].empty? or params[:url].gsub(/%0*[se]/, '') =~ URI::ABS_URI
 		user = User.first(:name => username)
 		if show = user.datasets.first(:name => params[:name])
 			update = show.update(
@@ -504,6 +502,8 @@ post '/url/:name', :login => true do
 				flash[:error] = 'An internal error occured. Try again.'
 			end
 		end
+	else
+		flash[:error] = 'This was not a valid URL.'
 	end
 	redirect request.referrer
 end
