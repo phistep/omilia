@@ -6,6 +6,10 @@ div.tooltip-inner{
 	text-shadow: none;
 }
 
+code{
+	color: inherit;
+}
+
 #login-form{
 	margin: 0 auto;
 	margin-top: 25px;
