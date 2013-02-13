@@ -489,7 +489,7 @@ delete '/collapse/:name/:season', :login => true do
 end
 
 post '/url/:name', :login => true do
-	if params[:url].gsub(/%(0*)[se]/, '') !~ URI::ABS_URI
+	if params[:url].gsub(/%0*[se]/, '') !~ URI::ABS_URI
 		flash[:error] = 'This was not a valid URL.'
 	else
 		user = User.first(:name => username)
