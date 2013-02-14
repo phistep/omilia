@@ -88,6 +88,9 @@ ol.episodes{
 	float: none;
 	text-align: center;
 }
+img.feature{
+	margin-bottom: 10px;
+}
 
 .footer{
 	text-align: center;
