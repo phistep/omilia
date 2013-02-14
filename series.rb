@@ -442,7 +442,6 @@ end
 put '/collapse/:name/:season', :login => true do
 	user = User.first(:name => username)
 	if show = user.datasets.first(:name => params[:name])
-		show = user.datasets.first(:name => params[:name])
 		collapsed = show.collapsed || String.new 
 		if collapsed.include? params[:season]
 			status 409 # conflict
