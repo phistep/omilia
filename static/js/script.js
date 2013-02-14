@@ -23,6 +23,9 @@ $(document).ready(function(){
 		           '<p class="muted">Hint: You can also link to local files on your computer by using <code>file://</code>.</p>',
 		'trigger': 'focus',
 	});
+	$('#custom-url-form .add-on').on('click', function(e){
+		$('#custom-url-input').focus();
+	});
 
 
 	// show modals

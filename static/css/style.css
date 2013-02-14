@@ -19,6 +19,10 @@ code{
 	margin-bottom: 0px;
 }
 
+#custom-url-form{
+	margin-top: 10px;
+}
+
 #search-form{
 	margin: 0 auto;
 	float: none;
@@ -68,7 +72,7 @@ h3 a, h3 a:hover, label.checkbox a{
 div.dropdown h4{
 	display: inline;
 }
-i[class*=icon-chevron]{
+i[class*=icon-chevron], #custom-url-form .add-on{
 	cursor: pointer;
 }
 
