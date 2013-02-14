@@ -6,6 +6,10 @@ div.tooltip-inner{
 	text-shadow: none;
 }
 
+code{
+	color: inherit;
+}
+
 #login-form{
 	margin: 0 auto;
 	margin-top: 25px;
@@ -17,6 +21,10 @@ div.tooltip-inner{
 
 #search-form .input-append{
 	width: 100%;
+}
+
+#custom-url-form{
+	margin-top: 10px;
 }
 
 li.show {
@@ -48,6 +56,10 @@ a.show:focus{
 	text-decoration: none;
 }
 
+h3 a, h3 a:hover, label.checkbox a{
+	color: rgb(51, 51, 51);
+}
+
 .btn.next-up{
 	margin-right: 5px;
 	margin-top: -1px;
@@ -59,7 +71,7 @@ a.show:focus{
 div.dropdown h4{
 	display: inline;
 }
-i[class*=icon-chevron]{
+i[class*=icon-chevron], #custom-url-form .add-on{
 	cursor: pointer;
 }
 

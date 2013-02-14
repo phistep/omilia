@@ -11,6 +11,23 @@ $(document).ready(function(){
 	$('[rel=tooltip]').tooltip();
 
 
+	// activate popover
+	$('#custom-url-input').popover({
+		'html': true,
+		'placement': 'bottom',
+		'title': 'Set your custom show URL',
+		'content': '<p>You can set your own URL for this show, so the title above will be linked there.</p>' +
+		           '<p>If you use the variables <code>%s</code> and <code>%e</code> to insert the season and episode number, every episode will be directly deep-linked!</p>' +
+		           '<p>In case you need leading zeros (like <code>05</code>), add as many <code>0</code> between <code>%</code> and <code>s</code>/<code>e</code> as you need digits. For example <code>%000e</code> will produce: <code>003</code> and <code>034</code>.</p>' +
+		           '<p>So when you happen to find an episode URL like this: <code>&hellip;.com/all/s04e13</code> the custom URL would go like this: <code>&hellip;.com/all/s%00se%00e</code>.</p>' +
+		           '<p class="muted">Hint: You can also link to local files on your computer by using <code>file://</code>.</p>',
+		'trigger': 'focus',
+	});
+	$('#custom-url-form .add-on').on('click', function(e){
+		$('#custom-url-input').focus();
+	});
+
+
 	// show modals
 	if(window.location.hash == '#delete-account'){
 		$('#delete-account').modal();
@@ -154,6 +171,7 @@ $(document).ready(function(){
 					tis.addClass('remove');
 					tis.removeClass('add');
 					tis.text('Remove from favorites');
+					$('#custom-url-form').css('display', 'block');
 				},
 				function(resonse){
 					console.log('error aaaaaaadd');
@@ -169,6 +187,10 @@ $(document).ready(function(){
 					tis.addClass('add');
 					tis.removeClass('remove');
 					tis.text('Add to favorites');
+					$('#custom-url-form').css('display', 'none');
+					$('#custom-url-input').attr('value', '');
+					$('span.episode-name').unwrap();
+					$('span.show-name').unwrap();
 					$('input[type=checkbox]').prop('checked', false);
 				},
 				function(resonse){
@@ -235,6 +257,7 @@ $(document).ready(function(){
 						btn.addClass('remove');
 						btn.removeClass('add');
 						btn.text('Remove from favorites');
+						$('#custom-url-form').css('display', 'block');
 						watching(
 							tis.prop('checked') ? 'PUT' : 'DELETE',
 							true,

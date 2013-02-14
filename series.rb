@@ -318,14 +318,22 @@ get '/show/:name' do
 			
 			@title = @show_name
 			@search = '' 
+
 			@watched_episodes = ''
-			if login? && @datasets.first(:name => @show_name) && episodes = @datasets.first(:name => @show_name).episodes
-				@watched_episodes = episodes 
-			end
 			@collapsed = ''
-			if login? && @datasets.first(:name => @show_name) && collapsed = @datasets.first(:name => @show_name).collapsed
-				@collapsed = collapsed
+			@custom_url = ''
+			if login? && show = @datasets.first(:name => @show_name)
+				if episodes = show.episodes
+					@watched_episodes = episodes
+				end
+				if collapsed = show.collapsed
+					@collapsed = collapsed
+				end
+				if custom_url = show.url
+					@custom_url = custom_url
+				end
 			end
+
 			erb :single_result
 		end
 	end
@@ -480,3 +488,22 @@ delete '/collapse/:name/:season', :login => true do
 	end
 end
 
+post '/url/:name', :login => true do
+	if params[:url].empty? or params[:url].gsub(/%0*[se]/, '') =~ URI::ABS_URI
+		user = User.first(:name => username)
+		if show = user.datasets.first(:name => params[:name])
+			update = show.update(
+				:url => params[:url]
+			)
+			unless update
+				watch.errors.each do |error|
+					puts error
+				end
+				flash[:error] = 'An internal error occured. Try again.'
+			end
+		end
+	else
+		flash[:error] = 'This was not a valid URL.'
+	end
+	redirect request.referrer
+end
