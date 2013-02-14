@@ -20,7 +20,7 @@ On OS X install `sqlite3` via [homebrew](http://mxcl.github.com/homebrew/):
 
     % brew install sqlite3
 
-Then Just run with Ruby 1.9.3:
+Then just run with Ruby 1.9.3:
 
     % gem install sinatra json erubis bcrypt-ruby rack-flash3 data_mapper dm-sqlite-adapter
 
@@ -29,9 +29,15 @@ Now download and start *omilia*:
     % git clone git://github.com/Ps0ke/omilia.git
     % cd omilia/
     % touch database.db
-    % ruby series.rb
+    % ruby omilia.rb
 
 Open [http://localhost:4567](http://localhost:4567) in your favorite browser and you're ready to go!
+
+
+## Powered by
+* [Twitter Bootstrap](http://getbootstrap.com/) (included, License: Apache v2.0)
+* [jQuery](http://jquery.org/) (included, License: MIT)
+* [Sinatra](http://sinatrarb.com) Ruby web framework
 
 
 ## License
@@ -45,8 +51,3 @@ Open [http://localhost:4567](http://localhost:4567) in your favorite browser and
 >
 > THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
-## Powered by
-* [Twitter Bootstrap](http://getbootstrap.com/) (included, License: Apache v2.0)
-* [jQuery](http://jquery.org/) (included, License: MIT)
-* [Sinatra](http://sinatrarb.com) Ruby web framework
