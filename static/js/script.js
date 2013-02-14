@@ -108,15 +108,12 @@ $(document).ready(function(){
 				'DELETE',
 				tis.attr('show'),
 				function(response){
-					console.log('sucess');
 					tis.addClass('changed');
 					tis.tooltip('destroy');
 					tis.attr('title', 'Add to favorites');
 					tis.tooltip();
 				},
-				function(resonse){
-					console.log('error');
-				}
+				function(resonse){}
 			);
 		}
 		else if(tis.hasClass('icon-star')){
@@ -124,15 +121,12 @@ $(document).ready(function(){
 				'PUT',
 				tis.attr('show'),
 				function(response){
-					console.log('sucess');
 					tis.addClass('changed');
 					tis.tooltip('destroy');
 					tis.attr('title', 'Delete from favorites');
 					tis.tooltip();
 				},
-				function(resonse){
-					console.log('error');
-				}
+				function(resonse){}
 			);
 		}
 		return false;
@@ -144,7 +138,6 @@ $(document).ready(function(){
 			'DELETE',
 			tis.attr('show'),
 			function(response){
-				console.log('sucess');
 				tis.parent().animate(
 					{ opacity:0, height:0 },
 					500,
@@ -153,9 +146,7 @@ $(document).ready(function(){
 					}
 				);
 			},
-			function(resonse){
-				console.log('error');
-			}
+			function(resonse){}
 		);
 		return false;
 	});
@@ -167,15 +158,12 @@ $(document).ready(function(){
 				'PUT',
 				tis.attr('show'),
 				function(response){
-					console.log('sucess');
 					tis.addClass('remove');
 					tis.removeClass('add');
 					tis.text('Remove from favorites');
 					$('#custom-url-form').css('display', 'block');
 				},
-				function(resonse){
-					console.log('error aaaaaaadd');
-				}
+				function(resonse){}
 			);
 		}
 		else if(tis.hasClass('remove')){
@@ -183,7 +171,6 @@ $(document).ready(function(){
 				'DELETE',
 				tis.attr('show'),
 				function(response){
-					console.log('sucess');
 					tis.addClass('add');
 					tis.removeClass('remove');
 					tis.text('Add to favorites');
@@ -193,9 +180,7 @@ $(document).ready(function(){
 					$('span.show-name').unwrap();
 					$('input[type=checkbox]').prop('checked', false);
 				},
-				function(resonse){
-					console.log('error remooooooovee');
-				}
+				function(resonse){}
 			);
 		}
 		return false;
@@ -243,16 +228,12 @@ $(document).ready(function(){
 			tis.prop('no-async') ? false : true,
 			show = location.pathname.split('/').pop(),
 			tis.attr('id'),
+			function(response){},
 			function(response){
-				console.log('success! ' + response);
-			},
-			function(response){
-				console.log('error! ' + response);
 				faving(
 					'PUT',
 					show,
 					function(res){
-						console.log('success');
 						var btn = $('#favbtn');
 						btn.addClass('remove');
 						btn.removeClass('add');
@@ -263,9 +244,7 @@ $(document).ready(function(){
 							true,
 							show,
 							tis.attr('id'),
-							function(response){
-								console.log('success! ' + response);
-							},
+							function(response){},
 							function(res){
 								if (tis.prop('checked')){
 									tis.prop('checked', false);
@@ -340,7 +319,6 @@ $(document).ready(function(){
 				}
 			},
 			function(response){
-				console.log('error ' + response)
 				tis.button('reset');
 			}
 		);
@@ -364,9 +342,6 @@ $(document).ready(function(){
 			'url': '/collapse/' + show + '/' + tis.attr('collapse-season'),
 			'dataType': 'text',
 			'async': true,
-			'success': function(response){
-				console.log('success! ' + response);
-			},
 			'type': tis.hasClass('icon-chevron-down') ? 'PUT' : 'DELETE'
 		});
 
