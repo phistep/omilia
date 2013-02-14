@@ -174,7 +174,9 @@ get '/' do
 end
 
 post '/login', :login => false do
-	if params[:password_repeat].empty?
+	if params[:username].empty? or params[:password].empty?
+		flash[:error] = "Please fill out all fields!"
+	elsif params[:password_repeat].empty?
 		# login
 		if password_correct? params[:username], params[:password]
 			session[:username] = params[:username]
@@ -220,13 +222,16 @@ get '/logout', :login => true do
 end
 
 post '/change-password', :login => true do
-	if params[:old_password] and params[:password] and params[:password_repeat]
+	if params[:old_password].empty? or params[:password].empty? or [:password_repeat].empty?
+		flash[:error] = "Please fill out all fields!"
+		redirect request.referrer + '#change-password'
+	else
 		db_user = User.first(:name => username)
 
 		if params[:password] != params[:password_repeat]
 			flash[:error] = "Passwords did not match, try again!"
 			redirect request.referrer + '#change-password'
-		elsif password_correct? username, params[:old_password], db_user 
+		elsif not password_correct? username, params[:old_password], db_user
 			flash[:error] = "The password was wrong, try again!"
 			redirect request.referrer + '#change-password'
 		else
