@@ -83,6 +83,12 @@ ol.episodes{
 	padding-left: 20px;
 }
 
+.demo-image.span4{
+	margin: 0 auto;
+	float: none;
+	text-align: center;
+}
+
 .footer{
 	text-align: center;
 }

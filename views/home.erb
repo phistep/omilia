@@ -1,5 +1,6 @@
 <% if login? %>
 <div class="row-fluid">
+<% if @favorites.count > 0 %>
 	<ul class="span8 offset2">
 	<% @favorites.each do |show| %>
 		<%
@@ -33,6 +34,14 @@
 		</a>
 	<% end %>
 	</ul>
+<% else %>
+	<div class="span8 offset2 well well-small">
+		You can add a show to your favorites by clicking the cute littel star <i class="icon-star-empty"></i> right next to it.
+	</div>
+	<div class="span4 demo-image">
+		<img class="img-polaroid" alt="" src="<%= to('/img/add-to-favorites.png') %>">
+	</div>
+<% end %>
 </div>
 <% else %>	
 <div class="row-fluid">
