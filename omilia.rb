@@ -165,7 +165,7 @@ before do
 end
 
 get '/' do
-	@title = 'title'
+	@title = login? ? username : nil
 	@search = ''
 	if login?
 		@favorites = @datasets.all(:order => [ :touch.desc ])

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title><%== @title %> &middot; omilia</title>
+	<title><% if @title %><%== @title %> &middot; <% end %>omilia</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 
@@ -48,7 +48,7 @@
 			<div class="span6 offset3">
 				<form id="search-form" method="get" action="/">
 					<div class="input-append">
-						<input name="search" class="input-block-level" id="search" value="<%== @search %>" type="text" placeholder="Let's watch something, yo." autocomplete="off">
+						<input name="search" class="input-block-level" id="search" value="<%== @search %>" type="text" placeholder="What are you watching?" autocomplete="off">
 						<button class="btn" type="submit"><i class="icon-search"></i></button>
 					</div> 
 				</form>
