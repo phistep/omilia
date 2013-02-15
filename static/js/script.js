@@ -36,7 +36,12 @@ $(document).ready(function(){
 		$('#change-password').modal();
 	}
 
-	
+	// login dropdown
+	if(window.location.hash == '#login'){
+		$('.dropdown-toggle').trigger('click');
+	}
+
+
 	// Change button label for login-register-button
 	$('.login-form .password-repeat').keyup(function(){
 		if($(this).val() == ''){

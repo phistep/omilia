@@ -221,7 +221,7 @@ post '/login', :login => false do
 			end
 		end
 	end
-	redirect '/'
+	redirect request.referrer + (flash[:error] ? '#login' : '')
 end
 
 get '/logout', :login => true do
