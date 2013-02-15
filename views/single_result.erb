@@ -18,6 +18,8 @@
 			<button class="btn" type="submit">Save</button>
 		</div>
 	</form>
+<% else %>
+		<button class="btn fav disabled" rel="tooltip" title="Log In or Sign Up to fav shows">Add to favorites</button>
 <% end %>
 		<ul class="seasons unstyled">
 		<% @seasons.each_with_index do |season, i| %>

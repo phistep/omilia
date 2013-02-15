@@ -40,9 +40,9 @@ $(document).ready(function(){
 	// Change button label for login-register-button
 	$('.login-form .password-repeat').keyup(function(){
 		if($(this).val() == ''){
-			$('.login-register-button').text('Login');
+			$('.login-register-button').text('Log In');
 		} else {
-			$('.login-register-button').text('Register');
+			$('.login-register-button').text('Sign Up');
 		}
 	});
 
