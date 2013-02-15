@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 	<title><% if @title %><%== @title %> &middot; <% end %>omilia</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<meta name="description" content="omilia: A simple TV show tracking web app.">
+	<meta name="author" content="Ps0ke">
 
 	<link href="<%= to('/css/bootstrap.min.css') %>" rel="stylesheet">
 	<link href="<%= to('/css/style.css') %>" rel="stylesheet">
@@ -15,6 +17,8 @@
 	<link rel="apple-touch-icon-precomposed"   sizes="72x72" href="<%= to('/img/apple-touch-icon_72x72.png') %>">
 	<link rel="apple-touch-icon-precomposed"                 href="<%= to('/img/apple-touch-icon_57x57.png') %>">
 	<link rel="shortcut icon" href="<%= to('/img/favicon.png') %>">
+	<meta name="msapplication-TileImage" content="<%= to('/img/msapplication-tile-image.png') %>">
+	<meta name="msapplication-TileColor" content="#dedede">
 
 	<!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
 	<!--[if lt IE 9]>
