@@ -164,6 +164,15 @@ before do
 	end
 end
 
+not_found do
+	erb :not_found
+end
+
+error do
+	@error = env['sinatra.error']
+	erb :error
+end
+
 get '/' do
 	@title = login? ? username : nil
 	@search = ''
