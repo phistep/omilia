@@ -1,6 +1,8 @@
 # omilia
 A simple TV show tracking web app.
 
+## Try it!
+I host the service myself on [omilia.ps0ke.de](http://omilia.ps0ke.de). Feel free to create an account and use it, or host a version yourself!
 
 ## Dependancies
 * Ruby 1.9.3
