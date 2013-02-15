@@ -10,12 +10,12 @@ code{
 	color: inherit;
 }
 
-#login-form{
-	margin: 0 auto;
-	margin-top: 25px;
-	float: none;
+.login-form{
+	margin-left: 10px;
+	margin-right: 10px;
+	margin-bottom: 0px;
 }
-#login-form .control-group{
+.login-form .control-group{
 	margin-bottom: 0px;
 }
 
