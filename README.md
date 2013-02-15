@@ -4,31 +4,54 @@ A simple TV show tracking web app.
 
 ## Dependancies
 * Ruby 1.9.3
-* sqlite3
-* gems
-    * Sinatra
-    * JSON
-    * erubis
-    * bcrypt
-    * rack-flash
-    * DataMapper
-        * dm-sqlite-adapter
+
+and the following gems:
+
+* Sinatra
+* JSON
+* erubis
+* bcrypt
+* rack-flash
+* DataMapper
 
 
 ## Install and Run
+To install the dependancies, just run with Ruby 1.9.3:
+
+    % gem install sinatra json erubis bcrypt-ruby rack-flash3 data_mapper
+
+Now download *omilia*:
+
+    % git clone git://github.com/Ps0ke/omilia.git
+    % cd omilia/
+
+Next you have to setup the database. I'm going to use SQLite as an example:
+
 On OS X install `sqlite3` via [homebrew](http://mxcl.github.com/homebrew/):
 
     % brew install sqlite3
 
-Then just run with Ruby 1.9.3:
+Install the necessary DataMapper adapter:
 
-    % gem install sinatra json erubis bcrypt-ruby rack-flash3 data_mapper dm-sqlite-adapter
+    % gem install dm-sqlite-adapter
 
-Now download and start *omilia*:
+And create the database:
 
-    % git clone git://github.com/Ps0ke/omilia.git
-    % cd omilia/
     % touch database.db
+
+Now you have to create your `config.rb` file:
+
+```ruby
+# database connection
+DataMapper.setup(:default, "sqlite://#{Dir.pwd}/database.db")
+
+# set serssion secret
+set :session_secret, 'oh so secret!'
+```
+Details about how DataMapper handles different databases can be be found in its [documentation](http://datamapper.org/getting-started.html).
+
+Finally, yank up the web server and run *omilia*:
+
     % ruby omilia.rb
 
 Open [http://localhost:4567](http://localhost:4567) in your favorite browser and you're ready to go!

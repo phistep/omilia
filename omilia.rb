@@ -9,11 +9,10 @@ require 'data_mapper'
 DataMapper::Logger.new($stdout, :debug) if development?
 require './models/dataset'
 require './models/user'
-DataMapper.setup(:default, "sqlite://#{Dir.pwd}/database.db")
+require './config.rb'
 DataMapper.finalize.auto_upgrade!
 
 set :public_folder, File.dirname(__FILE__) + '/static'
-set :session_secret, ''
 enable :sessions
 use Rack::Flash
 
