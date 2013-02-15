@@ -94,5 +94,21 @@ img.feature{
 
 .footer{
 	text-align: center;
+	font-size: 85%;
+	border-top: 1px solid rgb(238, 238, 238);
+	margin-bottom:10px;
+	margin-top: 50px;
+	padding-top: 10px;
+}
+.footer li, ol, ul{
+	margin: -3px 0px 0px 0px;
+}
+.footer a{
+	color: rgb(153, 153, 153);
+	border-bottom: 1px dotted rgb(153, 153, 153);
+}
+.footer a:hover{
+	border-bottom: 1px solid rgb(153, 153, 153);
+	text-decoration: none;
 }
 
