@@ -80,7 +80,8 @@ ul.seasons, li.season{
 }
 
 ol.episodes{
-	padding-left: 20px;
+	padding-left: 50px;
+	margin-top:5px;
 }
 
 .demo-image.span4{

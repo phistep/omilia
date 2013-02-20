@@ -44,7 +44,7 @@
 						id = se + '_' + ep
 					%>
 					<li>
-						<label class="checkbox inline" for="<%= id %>">
+						<label class="checkbox" for="<%= id %>">
 							<input <%== if @watched_episodes.include?(id) then 'checked ' end %>type="checkbox"<%= if login? then ' class="episode"' end %> id="<%= id %>">
 							<% if @custom_url =~ /%0*s/ and @custom_url =~ /%0*e/ %>
 								<%
