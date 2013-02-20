@@ -6,12 +6,12 @@
 		<h3><%= @show_name %> <small>(<%= @year %>)</small></h3>
 	<% end %>
 <% if login? %>
-	<% if @datasets.first(:name => @show_name) %>
-		<button id="favbtn" class="btn fav remove" show="<%= URI.escape(@show_name) %>">Remove from favorites</button>
+	<% if @datasets.first(:name => @show_name, :year => @year) %>
+		<button id="favbtn" class="btn fav remove" show="<%= URI.escape(@show_name+'/'+@year.to_s) %>">Remove from favorites</button>
 	<% else %>
-		<button id="favbtn" class="btn fav add" show="<%= URI.escape(@show_name) %>">Add to favorites</button>
+		<button id="favbtn" class="btn fav add" show="<%= URI.escape(@show_name+'/'+@year.to_s) %>">Add to favorites</button>
 	<% end %>
-	<form id="custom-url-form" action="/url/<%= URI.escape(@show_name) %>" method="post"<%= unless @datasets.first(:name => @show_name) then ' style="display:none;"' end %>>
+	<form id="custom-url-form" action="/url/<%= URI.escape(@show_name+'/'+@year.to_s) %>" method="post"<%= unless @datasets.first(:name => @show_name, :year => @year) then ' style="display:none;"' end %>>
 		<div class="input-prepend input-append">
 			<span class="add-on"><i class="icon-globe"></i></span>
 			<input id="custom-url-input" type="text" name="url" placeholder="Custom Show URL" value="<%== @custom_url %>">
@@ -44,7 +44,7 @@
 						id = se + '_' + ep
 					%>
 					<li>
-						<label class="checkbox inline" for="<%= id %>">
+						<label class="checkbox" for="<%= id %>">
 							<input <%== if @watched_episodes.include?(id) then 'checked ' end %>type="checkbox"<%= if login? then ' class="episode"' end %> id="<%= id %>">
 							<% if @custom_url =~ /%0*s/ and @custom_url =~ /%0*e/ %>
 								<%

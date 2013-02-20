@@ -2,12 +2,12 @@
 	<h3 class="offset2">Results for &ldquo;<%== @search %>&rdquo;:</h3>
 	<ul class="span8 offset2">
 	<% @shows.each do |show| %>
-		<a href="<%= to('/show/' + URI.escape(show['name'])) %>" class="show">
+		<a href="<%= to('/show/' + URI.escape(show['name']+'/'+show['year'].to_s)) %>" class="show">
 			<li class="show search">
-			<% if login? && @favorites.include?(show['name']) %>
-				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
+			<% if login? && @favorites.include?([show['name'], show['year'].to_s]) %>
+				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']+'/'+show['year'].to_s) %>" class="fav icon-star"></i>
 			<% elsif login? %>
-				<i rel="tooltip" title="Add to favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star-empty"></i>
+				<i rel="tooltip" title="Add to favorites" show="<%= URI.escape(show['name']+'/'+show['year'].to_s) %>" class="fav icon-star-empty"></i>
 			<% end %>
 				<strong><%== show['name'] %></strong>
 				(<%== show['year'].to_s %>)

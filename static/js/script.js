@@ -228,10 +228,11 @@ $(document).ready(function(){
 	
 	$('input[type=checkbox].episode').on('change', function(event){
 		var tis = $(this);
+		var show = $('#favbtn').attr('show');
 		watching(
 			tis.prop('checked') ? 'PUT' : 'DELETE',
 			tis.prop('no-async') ? false : true,
-			show = location.pathname.split('/').pop(),
+			show,
 			tis.attr('id'),
 			function(response){},
 			function(response){
@@ -342,7 +343,7 @@ $(document).ready(function(){
 
 	$('i[class*=icon-chevron]').on('click', function(){
 		tis = $(this);
-		var show = location.pathname.split('/').pop();
+		var show = $('#favbtn').attr('show');
 		$.ajax({
 			'url': '/collapse/' + show + '/' + tis.attr('collapse-season'),
 			'dataType': 'text',

@@ -3,6 +3,7 @@ class Dataset
 
 	property :id,        Serial
 	property :name,      String,   :required => true
+	property :year,      String,   :required => true
 	property :url,       String,   :length => 256
 	property :touch,     DateTime
 	property :episodes,  Text
