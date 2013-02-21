@@ -58,6 +58,8 @@ Finally, yank up the web server and run *omilia*:
 
 Open [http://localhost:4567](http://localhost:4567) in your favorite browser and you're ready to go!
 
+If you create a file named `motd.html` in *omilia*'s working directory, it will be displayed for logged in users. This can be used to announce downtimes or highlight new features. 
+
 
 ## Powered by
 * [Twitter Bootstrap](http://getbootstrap.com/) (included, License: Apache v2.0)

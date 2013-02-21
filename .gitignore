@@ -2,3 +2,4 @@ database.db
 .DS_Store
 assets/
 config.rb
+motd.html

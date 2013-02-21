@@ -1,4 +1,11 @@
 <% if login? %>
+<% if File.exists?('motd.html') && File.readable?('motd.html') && !File.zero?('motd.html') %>
+	<div class="row-fluid">
+		<div class="span8 offset2 well well-small">
+			<%= File.open('motd.html'){|file| file.read} %>	
+		</div>
+	</div>
+<% end %>
 <div class="row-fluid">
 <% if @favorites.count > 0 %>
 	<ul class="span8 offset2">
