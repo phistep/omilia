@@ -4,13 +4,13 @@
 	<ul class="span8 offset2">
 	<% @favorites.each do |show| %>
 		<%
-			info = show_info(show['name'])
+			info = show_info(show['name'], show['year'])
 			unless info.is_a?(Hash)
 				status 500
 				halt
 			end
 		%>
-		<a href="<%= to('/show/' + URI.escape(show.name)) %>" class="show">
+		<a href="<%= to('/show/' + URI.escape(show.name+'/'+show.year)) %>" class="show">
 			<li class="show home" style="
 					background: -webkit-gradient(linear, left top, right top, color-stop(<%== info[:progress] %>% ,rgba(0, 0, 0, .05)), color-stop(<%== info[:progress] %>%, rgba(0, 0, 0, 0)), color-stop(100%, rgba(0, 0, 0, 0))),
 					            -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgb(255, 255, 255)), color-stop(100%, rgb(242, 242, 242)));
@@ -19,7 +19,7 @@
 					background:         linear-gradient(to right,  rgba(0, 0, 0, .05) <%== info[:progress] %>%, rgba(0, 0, 0, 0) <%== info[:progress] %>%, rgba(0, 0, 0, 0)),
 					                    linear-gradient(to bottom, rgb(255, 255, 255), rgb(242, 242, 242));
 			">
-				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']) %>" class="fav icon-star"></i>
+				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show.name+'/'+show.year) %>" class="fav icon-star"></i>
 				<strong><%== show.name %></strong>
 				<span class="hidden-phone">(<%== info[:year] %>)</span>
 				<% if info[:unwatched] == 0 %>
@@ -27,7 +27,7 @@
 				<% else %>
 				<span rel="tooltip" title="<%== info[:unwatched] %> unwatched episode<%== if info[:unwatched] > 1 then 's' end %>" class="badge pull-right unwatched"><%== info[:unwatched] %></span>
 					<% if info[:next_season] != 0 and info[:next_episode] != 0 %>
-						<button rel="tooltip" title="Mark s<%== info[:next_season] %>e<%== info[:next_episode] %> as watched" next-up="<%== info[:next_season] %>_<%== info[:next_episode] %>" show="<%= URI.escape(show.name) %>" class="btn btn-mini pull-right next-up" data-loading-text="watching&hellip;" auto-complete="off">next up: s<%== info[:next_season] %>e<%== info[:next_episode] %></button>
+						<button rel="tooltip" title="Mark s<%== info[:next_season] %>e<%== info[:next_episode] %> as watched" next-up="<%== info[:next_season] %>_<%== info[:next_episode] %>" show="<%= URI.escape(show.name+'/'+show.year) %>" class="btn btn-mini pull-right next-up" data-loading-text="watching&hellip;" auto-complete="off">next up: s<%== info[:next_season] %>e<%== info[:next_episode] %></button>
 					<% end %>
 				<% end %>
 			</li>

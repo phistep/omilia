@@ -34,24 +34,25 @@ helpers do
 		end
 	end
 
-	def search_api query, clean=true
+	def search_api query, year=nil, clean=true
 		if clean
 			search_query = '%' + query.gsub(/\s+/, '%') + '%'
 		else
 			search_query = query
 		end
-		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(search_query)}"))
+		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(search_query)}#{year ? "&year=#{URI.escape(year)}" : ''}"))
 	end
 
-	def save_show name
+	def save_show name, year
 		unless login?
 			status 403 # forbidden
 			halt
 		end
 		user = User.first(:name => username)
-		if user.datasets.all(:name => name).empty?
+		if user.datasets.all(:name => name, :year => year).empty?
 			fav = user.datasets.new(
 				:name => name,
+				:year => year,
 				:touch => Time.now,
 			)
 			if fav.save
@@ -67,10 +68,10 @@ helpers do
 		end
 	end
 
-	def show_info name
+	def show_info name, year
 		return 403 unless login?
-		if @datasets.first(:name => name)
-			if episodes = @datasets.first(:name => name).episodes
+		if @datasets.first(:name => name, :year => year)
+			if episodes = @datasets.first(:name => name, :year => year).episodes
 				db_episodes = episodes
 			else
 				db_episodes = String.new
@@ -79,7 +80,7 @@ helpers do
 			return 409 # conflict
 		end
 
-		result = JSON.parse(search_api(name, false))
+		result = JSON.parse(search_api(name, year, false))
 		total = result[result.keys.first]['episodes'].count
 
 		all_seasons = Array.new
@@ -300,18 +301,19 @@ get '/search/:query' do
 			@favorites = Array.new
 			if @datasets
 				@datasets.all.each do |show|
-					@favorites.push show.name
+					@favorites.push [show.name, show.year]
 				end
 			end
+			p @favorites
 			erb :multi_result
 		else
-			redirect to("/show/#{URI.escape((result.keys).first)}")
+			redirect to("/show/#{URI.escape((result.keys).first)}/#{URI.escape(result.keys[1])}")
 		end
 	end
 end
 
-get '/show/:name' do
-	result = search_api params[:name], false
+get '/show/:name/:year/?' do
+	result = search_api params[:name], params[:year], false
 	if result == 'null' 
 		redirect to('/search/' + params[:name].first)
 	else
@@ -335,7 +337,7 @@ get '/show/:name' do
 			@watched_episodes = ''
 			@collapsed = ''
 			@custom_url = ''
-			if login? && show = @datasets.first(:name => @show_name)
+			if login? && show = @datasets.first(:name => @show_name, :year => @year)
 				if episodes = show.episodes
 					@watched_episodes = episodes
 				end
@@ -353,18 +355,18 @@ get '/show/:name' do
 
 end
 
-put '/show/:name', :login => true do
+put '/show/:name/:year', :login => true do
 	# save show as favorite
-	status save_show params[:name]
+	status save_show params[:name], params[:year]
 end
 
-delete '/show/:name', :login => true do
+delete '/show/:name/:year', :login => true do
 	# delete show from favorites
 	user = User.first(:name => username)
-	if user.datasets.all(:name => params[:name]).empty?
+	if user.datasets.all(:name => params[:name], :year => params[:year]).empty?
 		status 409 # conflict
 	else
-		if user.datasets.all(:name => params[:name]).destroy
+		if user.datasets.all(:name => params[:name], :year => params[:year]).destroy
 			status 202 # accepted
 		else
 			status 500 # internal server error
@@ -372,14 +374,13 @@ delete '/show/:name', :login => true do
 	end
 end
 
-put '/show/:name/:season/:episode', :login => true do
+put '/show/:name/:year/:season/:episode', :login => true do
 	# mark :season/:episode as watched
 	user = User.first(:name => username)
-	unless show = user.datasets.first(:name => params[:name])
+	unless show = user.datasets.first(:name => params[:name], :year => params[:year])
 		status 409 # conflict
 		halt
 	end
-	show = user.datasets.first(:name => params[:name])
 	id = params[:season] + '_' + params[:episode]
 	episodes = show.episodes || String.new 
 	if episodes.include? id
@@ -400,10 +401,10 @@ put '/show/:name/:season/:episode', :login => true do
 	end
 end
 
-delete '/show/:name/:season/:episode', :login => true do
+delete '/show/:name/:year/:season/:episode', :login => true do
 	# mark :season/:episode as unwatched
 	user = User.first(:name => username)
-	if show = user.datasets.first(:name => params[:name])
+	if show = user.datasets.first(:name => params[:name], :year => params[:year])
 		id = params[:season] + '_' + params[:episode] 
 		if show.episodes.include? id
 			new_episodes = show.episodes.sub(/#{id};/, '')
@@ -442,8 +443,8 @@ get '/suggest' do
 	JSON.generate(shows)
 end
 
-get '/info/:show', :login => true do
-	info_hash = show_info(params[:show])
+get '/info/:show/:year', :login => true do
+	info_hash = show_info(params[:show], params[:year])
 	if info_hash.is_a?(Hash)
 		content_type :json
 		JSON.generate(info_hash)
@@ -452,9 +453,9 @@ get '/info/:show', :login => true do
 	end
 end
 
-put '/collapse/:name/:season', :login => true do
+put '/collapse/:name/:year/:season', :login => true do
 	user = User.first(:name => username)
-	if show = user.datasets.first(:name => params[:name])
+	if show = user.datasets.first(:name => params[:name], :year => params[:year])
 		collapsed = show.collapsed || String.new 
 		if collapsed.include? params[:season]
 			status 409 # conflict
@@ -476,9 +477,9 @@ put '/collapse/:name/:season', :login => true do
 	end
 end
 
-delete '/collapse/:name/:season', :login => true do
+delete '/collapse/:name/:year/:season', :login => true do
 	user = User.first(:name => username)
-	if show = user.datasets.first(:name => params[:name])
+	if show = user.datasets.first(:name => params[:name], :year => params[:year])
 		if show.collapsed.include? params[:season]
 			new_collapsed = show.collapsed.sub(/#{params[:season]};/, '')
 			update = show.update(
@@ -500,10 +501,10 @@ delete '/collapse/:name/:season', :login => true do
 	end
 end
 
-post '/url/:name', :login => true do
+post '/url/:name/:year', :login => true do
 	if params[:url].empty? or params[:url].gsub(/%0*[se]/, '') =~ URI::ABS_URI
 		user = User.first(:name => username)
-		if show = user.datasets.first(:name => params[:name])
+		if show = user.datasets.first(:name => params[:name], :year => params[:year])
 			update = show.update(
 				:url => params[:url]
 			)
