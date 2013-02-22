@@ -101,7 +101,7 @@ img.feature{
 	margin-top: 50px;
 	padding-top: 10px;
 }
-.footer li, ol, ul{
+.footer li, .footer ol, .footer ul{
 	margin: -3px 0px 0px 0px;
 }
 .footer a{
