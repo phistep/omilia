@@ -1,5 +1,7 @@
 <div class="row-fluid">
 	<h3 class="offset2">Results for &ldquo;<%== @search %>&rdquo;:</h3>
+</div>
+<div class="row-fluid">
 	<ul class="span8 offset2">
 	<% @shows.each do |show| %>
 		<a href="<%= to('/show/' + URI.escape(show['name']+'/'+show['year'].to_s)) %>" class="show">
