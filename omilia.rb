@@ -305,10 +305,9 @@ get '/search/:query' do
 					@favorites.push [show.name, show.year]
 				end
 			end
-			p @favorites
 			erb :multi_result
 		else
-			redirect to("/show/#{CGI.escape((result.keys).first)}/#{CGI.escape(result.keys[1])}")
+			redirect to("/show/#{CGI.escape(result.keys.first)}/#{CGI.escape(result[result.keys.first]['year'].to_s)}")
 		end
 	end
 end
@@ -322,7 +321,7 @@ get '/show/:name/:year/?' do
 		if result.key? 'shows'
 			redirect to('/search/' + params[:name].first)
 		else
-			@show_name = (result.keys).first
+			@show_name = result.keys.first
 			@year = result[@show_name]['year']
 			@seasons = Array.new
 			result[@show_name]['episodes'].each do |episode|
