@@ -4,12 +4,12 @@
 <div class="row-fluid">
 	<ul class="span8 offset2">
 	<% @shows.each do |show| %>
-		<a href="<%= to('/show/' + URI.escape(show['name']+'/'+show['year'].to_s)) %>" class="show">
+		<a href="<%= to("show/#{CGI.escape(show['name'])}/#{CGI.escape(show['year'].to_s)}") %>" class="show">
 			<li class="show search">
 			<% if login? && @favorites.include?([show['name'], show['year'].to_s]) %>
-				<i rel="tooltip" title="Delete from favorites" show="<%= URI.escape(show['name']+'/'+show['year'].to_s) %>" class="fav icon-star"></i>
+				<i rel="tooltip" title="Delete from favorites" show="<%= "#{CGI.escape(show['name'])}/#{CGI.escape(show['year'].to_s)}" %>" class="fav icon-star"></i>
 			<% elsif login? %>
-				<i rel="tooltip" title="Add to favorites" show="<%= URI.escape(show['name']+'/'+show['year'].to_s) %>" class="fav icon-star-empty"></i>
+				<i rel="tooltip" title="Add to favorites" show="<%= "#{CGI.escape(show['name'])}/#{CGI.escape(show['year'].to_s)}" %>" class="fav icon-star-empty"></i>
 			<% end %>
 				<strong><%== show['name'] %></strong>
 				(<%== show['year'].to_s %>)

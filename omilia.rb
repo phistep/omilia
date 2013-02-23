@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'net/http'
+require 'cgi'
 require 'json'
 require 'erubis'
 require 'bcrypt' # bcrypt-ruby
@@ -40,7 +41,7 @@ helpers do
 		else
 			search_query = query
 		end
-		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{URI.escape(search_query)}#{year ? "&year=#{URI.escape(year)}" : ''}"))
+		Net::HTTP.get(URI("http://imdbapi.poromenos.org/json/?name=#{CGI.escape(search_query)}#{year ? "&year=#{CGI.escape(year)}" : ''}"))
 	end
 
 	def save_show name, year
@@ -154,7 +155,7 @@ end
 
 before do
 	if params.has_key? 'search'
-		redirect to("/search/#{URI.escape(params['search'])}")
+		redirect to("/search/#{CGI.escape(params['search'])}")
 	end
 end
 
@@ -307,7 +308,7 @@ get '/search/:query' do
 			p @favorites
 			erb :multi_result
 		else
-			redirect to("/show/#{URI.escape((result.keys).first)}/#{URI.escape(result.keys[1])}")
+			redirect to("/show/#{CGI.escape((result.keys).first)}/#{CGI.escape(result.keys[1])}")
 		end
 	end
 end

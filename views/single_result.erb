@@ -7,11 +7,11 @@
 	<% end %>
 <% if login? %>
 	<% if @datasets.first(:name => @show_name, :year => @year) %>
-		<button id="favbtn" class="btn fav remove" show="<%= URI.escape(@show_name+'/'+@year.to_s) %>">Remove from favorites</button>
+		<button id="favbtn" class="btn fav remove" show="<%= "#{CGI.escape(@show_name)}/#{CGI.escape(@year.to_s)}" %>">Remove from favorites</button>
 	<% else %>
-		<button id="favbtn" class="btn fav add" show="<%= URI.escape(@show_name+'/'+@year.to_s) %>">Add to favorites</button>
+		<button id="favbtn" class="btn fav add" show="<%= "#{CGI.escape(@show_name)}/#{CGI.escape(@year.to_s)}" %>">Add to favorites</button>
 	<% end %>
-	<form id="custom-url-form" action="/url/<%= URI.escape(@show_name+'/'+@year.to_s) %>" method="post"<%= unless @datasets.first(:name => @show_name, :year => @year) then ' style="display:none;"' end %>>
+	<form id="custom-url-form" action="/url/<%= "#{CGI.escape(@show_name)}/#{CGI.escape(@year.to_s)}" %>" method="post"<%= unless @datasets.first(:name => @show_name, :year => @year) then ' style="display:none;"' end %>>
 		<div class="input-prepend input-append">
 			<span class="add-on"><i class="icon-globe"></i></span>
 			<input id="custom-url-input" type="text" name="url" placeholder="Custom Show URL" value="<%== @custom_url %>">
